@@ -100,10 +100,12 @@
     b.addEventListener("click", function () {
       var en = b.getAttribute("data-lang") === "en";
       langBtns.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-      document.getElementById("letter-hi").hidden = en;
-      document.getElementById("await-hi").hidden = en;
-      document.getElementById("letter-en").hidden = !en;
-      document.getElementById("await-en").hidden = !en;
+      // Both versions stay in the layout (stacked), so the card keeps one height.
+      [["letter-hi", !en], ["await-hi", !en], ["letter-en", en], ["await-en", en]].forEach(function (p) {
+        var el = document.getElementById(p[0]);
+        el.classList.toggle("is-off", !p[1]);
+        el.setAttribute("aria-hidden", String(!p[1]));
+      });
     });
   });
 

@@ -120,6 +120,8 @@
 
   /* ---------- Invitation wording ---------- */
   .families { background: var(--maroon-deep); color: #FBEFDC; }
+  .families .ganesh { display: block; width: 58px; height: 58px; margin: 0 auto 22px; color: var(--gold-pale); }
+  .families .line { margin: 0 auto; max-width: 340px; font: 600 11px/2.1 var(--sans); letter-spacing: .26em; text-transform: uppercase; color: rgba(251,239,220,.82); }
   .families .from { font: 400 18px/1.6 var(--serif); color: rgba(251,239,220,.85); max-width: 320px; margin: 0 auto; }
   .families .from b { display: block; font-weight: 500; font-size: 20px; color: #FFF4E0; margin-bottom: 6px; }
   .families .who { font: 400 clamp(46px, 13vw, 58px)/1.1 var(--script); color: #FFF4E0; margin-top: 18px; }
@@ -139,17 +141,28 @@
   .letter-body { font: 400 17px/1.95 var(--deva); color: #3A2A22; }
   .letter-en { font: 400 18px/1.7 var(--serif); color: #3A2A22; }
   .letter-body p, .letter-en p { margin: 0 0 14px; text-wrap: pretty; }
-  .letter .salute { font-size: 1.12em; color: var(--maroon); margin-bottom: 2px; }
-  .letter .pranam { color: var(--maroon); margin-bottom: 18px; }
-  .letter .sign { margin-top: 20px; text-align: right; }
-  .letter .await { font: 400 16px/1.7 var(--deva); color: var(--muted); }
+  .poem { text-align: center; }
+  .lt-stack { display: grid; }
+  .lt-stack > * { grid-area: 1 / 1; transition: opacity .35s ease; }
+  .lt-stack > .is-off { visibility: hidden; opacity: 0; }
+  .letter-body.poem { line-height: 1.9; }
+  .poem p { margin-bottom: 22px; }
+  @media (max-width: 759px) {
+    .letter { padding-left: 18px; padding-right: 18px; }
+    .letter-en.poem { font-size: 16px; line-height: 1.65; }
+  }
   .letter .await.en { font: italic 400 17px/1.6 var(--serif); }
-  .letter .name { font: 400 30px/1.3 var(--hand); color: var(--maroon); margin-top: 4px; }
   .lang-toggle { display: flex; margin: 24px auto 0; width: max-content; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #FFFBF2; }
   .lang-toggle button { border: 0; background: transparent; padding: 8px 18px; border-radius: 999px; cursor: pointer; min-height: 38px;
     font: 600 10px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
   .lang-toggle button[aria-pressed="true"] { background: var(--maroon); color: #FBEFDC; }
   .lang-toggle .d { font: 400 14px var(--deva); letter-spacing: 0; text-transform: none; }
+  .letter .poem + .sign { text-align: center; margin-top: 8px; }
+  .letter .salute { font-size: 1.12em; color: var(--maroon); margin-bottom: 2px; }
+  .letter .pranam { color: var(--maroon); margin-bottom: 18px; }
+  .letter .sign { margin-top: 20px; text-align: right; }
+  .letter .await { font: 400 16px/1.7 var(--deva); color: var(--muted); }
+  .letter .name { font: 400 30px/1.3 var(--hand); color: var(--maroon); margin-top: 4px; }
 
   /* ---------- Venue (as on save-the-date) ---------- */
   .venue { background: var(--ivory); }
@@ -358,6 +371,24 @@
         <use href="#marigold-y" y="4" /><use href="#marigold" y="14" /><use href="#marigold-y" y="24" />
       </g>
     </pattern>
+    <symbol id="ganesh" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24.5 17.5 C26 11.5 29 8.5 32 6.5 C35 8.5 38 11.5 39.5 17.5" />
+        <path d="M23 18 H41" />
+        <path d="M22.5 21 C27 17.8 37 17.8 41.5 21" />
+        <path d="M22.5 21 C15 17.5 7.5 22 8.5 30 C9.5 37 16 39.5 22 36.5" />
+        <path d="M41.5 21 C49 17.5 56.5 22 55.5 30 C54.5 37 48 39.5 42 36.5" />
+        <path d="M22.5 21 C21.5 28 23 34 27.5 38.5" />
+        <path d="M41.5 21 C42.5 28 41 34 36.5 38.5" />
+        <path d="M30 29 C29 37 27.5 44 30.5 50 C33 55 39.5 54.5 40.5 50.5 C41.2 47.5 38.5 46 36.8 47.6" />
+        <path d="M34 29 C34.2 36 33.6 41 35.2 44.5" />
+        <path d="M26.2 36.5 L24 41.5" />
+        <path d="M32 20.5 V24" />
+      </g>
+      <circle cx="32" cy="5.2" r="1.3" fill="currentColor" />
+      <circle cx="27.2" cy="27" r="1.1" fill="currentColor" />
+      <circle cx="36.8" cy="27" r="1.1" fill="currentColor" />
+    </symbol>
     <symbol id="paisley" viewBox="0 0 46 46">
       <path d="M6 6 C 22 4, 34 12, 32 24 C 30 33, 19 36, 14 29 C 10 23, 15 17, 21 20 C 25 22, 24 27, 20 27" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
       <circle cx="6" cy="6" r="2.4" fill="currentColor" />
@@ -431,11 +462,13 @@
   <!-- ============ Invitation wording ============ -->
   <section class="section families" data-screen-label="Invitation">
     <div class="reveal">
-      <p class="from"><b>Smt. Sarita &amp; Shri Sunil Kumar Saxena</b>request the pleasure of your company at the wedding of their son</p>
+      <svg class="ganesh" role="img" aria-label="Lord Ganesh"><use href="#ganesh" /></svg>
+      <p class="line">On the occasion of the<br />wedding ceremony of our son</p>
       <div class="who">Arunav</div>
       <div class="with">with</div>
       <div class="who" style="margin-top:0">Shambhavi</div>
-      <div class="of">daughter of Smt. Sonia &amp; Shri Tarun Sharma</div>
+      <div class="of">(D/o Smt. Sonia &amp; Shri Tarun Sharma)</div>
+      <p class="line" style="margin-top:30px">We solicit your presence<br />to celebrate with us<br />and bless the couple</p>
     </div>
   </section>
 
@@ -448,27 +481,31 @@
       <svg class="corner bl" aria-hidden="true"><use href="#paisley" /></svg>
       <svg class="corner br" aria-hidden="true"><use href="#paisley" /></svg>
 
-      <div class="letter-body" id="letter-hi">
-        <p class="salute">प्रिय आत्मीयजन</p>
-        <p class="pranam">सादर प्रणाम</p>
-        <p>हम सबके लिए अत्यन्त हर्ष और मंगल का अवसर है । हमारे प्रिय पुत्र अरुनव एवं प्रिय शाम्भवी का शुभ-विवाह समारोह आयोजित होने जा रहा है। इस पावन अवसर पर आपका स्नेहिल सान्निध्य हमारे लिए अमूल्य होगा।</p>
-        <p>विवाह के समस्त आयोजन सुव्यवस्थित रूप से संपन्न हो सकें, इसके लिए आपसे विनम्र अनुरोध है कि कृपया अपने आगमन की अग्रिम सूचना यथाशीघ्र प्रदान करने का कष्ट करें।</p>
-        <p>आपके आने की जानकारी मिलने से आवास, स्वागत एवं अन्य व्यवस्थाएँ सुचारु रूप से करने में सुविधा होगी।</p>
-        <p>आप अपनी सहमति एवं आगमन का विवरण कृपया फोन अथवा संदेश के माध्यम से अवगत कराने की कृपा करें।</p>
+      <div class="lt-stack">
+      <div class="letter-body poem" id="letter-hi">
+        <p class="salute">प्रिय आत्मीय स्नेहीजन</p>
+        <p>जीवन की किताब में<br />एक नया पन्ना जुड़ने जा रहा है,<br />हमारे घर का एक प्यारा-सा सपना<br />नए रिश्तों के रंगों में ढलने जा रहा है।</p>
+        <p>प्रिय अरुनव के जीवन में<br />एक नई सुबह दस्तक दे रही है,<br />प्रिय शांभवी संग दुनिया<br />नए सपनों से सजने जा रही है।</p>
+        <p>इस मंगल बेला को<br />और भी खास बनाना है,<br />आपकी सहभागिता ही<br />इस अवसर का सबसे सुंदर उपहार है।</p>
+        <p>इसी अपनत्व के साथ<br />आपको बुला रहे हैं अपने आँगन,<br />आइए, इस नए रिश्ते की खुशबू में<br />आपकी उपस्थिति भी<br />घुल जाए बनकर चंदन।</p>
+        <p>प्रिय अरुनव शांभवी के शुभ विवाह में<br />आपका आना हमारे लिए<br />खुशियों का सबसे सुंदर उत्सव है।</p>
       </div>
 
-      <div class="letter-en" id="letter-en" lang="en" hidden>
-        <p class="salute">Dear loved ones,</p>
-        <p class="pranam"><i>With respectful pranaam,</i></p>
-        <p>This is an occasion of great joy and blessing for all of us. The wedding of our dear son Arunav and dear Shambhavi is soon to be celebrated, and on this sacred occasion your loving presence will mean the world to us.</p>
-        <p>So that every part of the wedding can be arranged smoothly, we humbly request you to let us know of your arrival in advance, at your earliest.</p>
-        <p>Knowing when you will arrive helps us make your stay, your welcome and all other arrangements run smoothly.</p>
-        <p>Kindly share your confirmation and travel details with us by phone or message.</p>
+      <div class="letter-en poem is-off" id="letter-en" lang="en" aria-hidden="true">
+        <p class="salute">Dear loved ones, near and dear,</p>
+        <p>In the book of life<br />a new page is about to be added;<br />a sweet little dream of our home<br />is about to take on the colours of new bonds.</p>
+        <p>In dear Arunav&rsquo;s life<br />a new morning is knocking at the door;<br />with dear Shambhavi, his world<br />is about to be adorned with new dreams.</p>
+        <p>This auspicious moment<br />we wish to make more special still;<br />your presence and your part in it<br />are the most beautiful gift of this occasion.</p>
+        <p>With this same warmth and closeness<br />we invite you into our home;<br />come, and in the fragrance of this new bond<br />let your presence too<br />blend in like sandalwood.</p>
+        <p>At the wedding of dear Arunav and Shambhavi,<br />your coming is, for us,<br />the most beautiful celebration of joy.</p>
+      </div>
       </div>
 
       <div class="sign">
-        <div class="await" id="await-hi">आपके शुभाशीष और स्नेहिल उपस्थिति की प्रतीक्षा में 🙏</div>
-        <div class="await en" id="await-en" lang="en" hidden>Awaiting your blessings and loving presence 🙏</div>
+        <div class="lt-stack">
+          <div class="await" id="await-hi">सप्रेम सादर आपके आगमन की प्रतीक्षा में</div>
+          <div class="await en is-off" id="await-en" lang="en" aria-hidden="true">With love and respect, awaiting your arrival</div>
+        </div>
         <div class="name">सरिता सुनील</div>
       </div>
     </article>
@@ -543,7 +580,7 @@
     <article class="event ev-starry reveal">
       <div class="ev-head">
         <h3 class="ev-name">Engagement</h3>
-        <p class="ev-blurb">Lagan, tilak and the ring ceremony, then cake, performances and dinner under the stars.</p>
+        <p class="ev-blurb">Lagan, tilak and the ring ceremony, followed by cocktails, cake cutting, performances and dinner under the stars.</p>
       </div>
       <svg class="ev-art" viewBox="0 150 400 210" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
