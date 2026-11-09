@@ -124,7 +124,7 @@
       setTimeout(function () { intro.hidden = true; window.dispatchEvent(new Event("scroll")); }, reduceMotion ? 50 : 1600);
     };
     sealBtn.addEventListener("click", openEnvelope);
-    document.querySelector("#intro .env").addEventListener("click", openEnvelope);
+    document.getElementById("stage").addEventListener("click", openEnvelope);
     document.addEventListener("keydown", function (e) {
       if (!opened && (e.key === "Enter" || e.key === " " || e.key === "Escape")) { e.preventDefault(); openEnvelope(); }
     });
