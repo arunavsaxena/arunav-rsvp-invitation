@@ -36,8 +36,10 @@ pages land in one Sheet. Field mapping is in `save-the-date/README.md`. Replies 
 this page look like this:
 
 - **Functions attending** is `Both days`, or `Not attending` for a decline.
-- **Special requests** holds `Arrival: <date>, by <mode>, <note>` when the guest
-  filled in arrival details. The Form has no separate arrival question.
+- **Special requests** holds the travel details, for example
+  `Arrival: by train, Wed, 27 Jan, 11:00 am | Departure: by road, Fri, 29 Jan, 10:00 am | Drivers: 1`.
+  Arrival and departure each have a mode (road or train), a date and a time;
+  drivers is an optional count. The Form has no separate travel questions.
 - **Number of guests** is `0` for a decline.
 - **Message for us** is left empty.
 
