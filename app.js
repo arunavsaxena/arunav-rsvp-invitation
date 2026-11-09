@@ -36,6 +36,15 @@
   })();
 
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Lite mode for low-power phones or Data Saver: same design, less GPU work.
+  var lite = (function () {
+    var c = navigator.connection;
+    if (c && c.saveData) return true;
+    if (navigator.deviceMemory && navigator.deviceMemory <= 3) return true;
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) return true;
+    return false;
+  })();
+  if (lite) document.documentElement.classList.add("lite");
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
   // ---- Floating lanterns --------------------------------------------------
@@ -54,8 +63,26 @@
       host.appendChild(l);
     }
   }
-  lanterns(document.getElementById("sky"), 12);
-  lanterns(document.getElementById("sky-intro"), 12);
+  lanterns(document.getElementById("sky"), lite ? 0 : 12);
+  lanterns(document.getElementById("sky-intro"), lite ? 6 : 12);
+
+  // The page covers the background sky except on mid-width screens, so stop
+  // its lanterns when nobody can see them.
+  function trimSky() {
+    var sky = document.getElementById("sky");
+    var visible = window.innerWidth > 480 && window.innerWidth < 760;
+    sky.style.display = visible ? "" : "none";
+  }
+  trimSky();
+  window.addEventListener("resize", trimSky);
+
+  // Pause scene animations while they are off-screen.
+  if ("IntersectionObserver" in window) {
+    var pauser = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { e.target.classList.toggle("paused", !e.isIntersecting); });
+    }, { rootMargin: "120px 0px" });
+    document.querySelectorAll(".ev-art, .hero, .families, .countdown, .contacts, footer").forEach(function (el) { pauser.observe(el); });
+  }
 
   // ---- Stars in the engagement scene -----------------------------------------
   (function () {
@@ -217,7 +244,7 @@
     // Block-print textures drift slower than the content for a sense of depth.
     var textured = Array.prototype.slice.call(document.querySelectorAll(".hero, .letter-sec, .events, .rsvp"));
     function parallax() {
-      if (reduceMotion) return;
+      if (reduceMotion || lite) return;
       var y = window.scrollY, vh = window.innerHeight;
       if (heroImg) heroImg.setAttribute("transform", "translate(0 " + Math.min(24, y * 0.05).toFixed(2) + ")");
       arts.forEach(function (g) {

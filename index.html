@@ -17,7 +17,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%237A1F2B'/%3E%3Ctext x='32' y='43' font-size='30' font-family='Georgia,serif' font-style='italic' fill='%23E8C677' text-anchor='middle'%3EAS%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600&family=Pinyon+Script&family=Karla:wght@400;500;600&family=Tiro+Devanagari+Hindi&family=Kalam:wght@400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600&family=Pinyon+Script&family=Karla:wght@400;500;600&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Kalam&amp;text=%E0%A4%B8%E0%A4%B0%E0%A4%BF%E0%A4%A4%E0%A4%BE%20%E0%A4%B8%E0%A5%81%E0%A4%A8%E0%A5%80%E0%A4%B2&amp;display=swap" rel="stylesheet" />
 <style>
   :root {
     --ivory: #FBF5EA;
@@ -202,6 +203,18 @@
   /* Pinyon Script has one hairline weight; a thin same-colour outline makes it sturdier. */
   .names, .families .who, .families .hosts-sign, .day span em, .ev-name, .rsvp-title, .ty, footer .closing {
     -webkit-text-stroke: .6px currentColor; paint-order: stroke fill; }
+
+  /* ---------- Performance ---------- */
+  /* Animations pause while their section is off-screen. */
+  .paused, .paused * { animation-play-state: paused !important; }
+  /* Lite mode (low-memory / few-core phones, or Data Saver): no live blur, no parallax. */
+  .lite .section-nav, .lite .ev-text, .lite .cd > div, .lite .lang-toggle, .lite .hero-actions .btn-ghost {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .lite .section-nav { background: rgba(255,250,242,.97); }
+  .lite .ev-text { background: rgba(255,251,244,.97); }
+  .lite .cd > div { background: rgba(255,255,255,.1); }
+  .lite .lang-toggle, .lite .hero-actions .btn-ghost { background: #FFFBF2; }
+  .lite [data-px], .lite .rangoli, .lite .cd-mandala, .lite .ev-art .px { will-change: auto; }
 
   /* ---------- Invitation wording ---------- */
   .families { background: var(--maroon-deep); color: #FBEFDC; }
@@ -838,7 +851,7 @@
         <g id="stars-eng"></g>
         <circle cx="348" cy="182" r="14" fill="#FFF3D1" mask="url(#moonMask)" filter="url(#softglow)" />
         <path d="M-10 160 Q200 214 410 160" fill="none" stroke="#FFFFFF" stroke-opacity=".22" stroke-width=".8" />
-        <g fill="#FFD98A" filter="url(#softglow)"><circle class="tw" cx="2.4" cy="165.1" r="2.4" style="animation-delay:-0.00s" /><circle class="tw" cx="27.1" cy="170.7" r="2.4" style="animation-delay:-0.37s" /><circle class="tw" cx="51.8" cy="175.5" r="2.4" style="animation-delay:-0.74s" /><circle class="tw" cx="76.5" cy="179.7" r="2.4" style="animation-delay:-1.11s" /><circle class="tw" cx="101.2" cy="183.0" r="2.4" style="animation-delay:-1.48s" /><circle class="tw" cx="125.9" cy="185.6" r="2.4" style="animation-delay:-1.85s" /><circle class="tw" cx="150.6" cy="187.5" r="2.4" style="animation-delay:-2.22s" /><circle class="tw" cx="175.3" cy="188.6" r="2.4" style="animation-delay:-2.59s" /><circle class="tw" cx="200.0" cy="189.0" r="2.4" style="animation-delay:-2.96s" /><circle class="tw" cx="224.7" cy="188.6" r="2.4" style="animation-delay:-0.33s" /><circle class="tw" cx="249.4" cy="187.5" r="2.4" style="animation-delay:-0.70s" /><circle class="tw" cx="274.1" cy="185.6" r="2.4" style="animation-delay:-1.07s" /><circle class="tw" cx="298.8" cy="183.0" r="2.4" style="animation-delay:-1.44s" /><circle class="tw" cx="323.5" cy="179.7" r="2.4" style="animation-delay:-1.81s" /><circle class="tw" cx="348.2" cy="175.5" r="2.4" style="animation-delay:-2.18s" /><circle class="tw" cx="372.9" cy="170.7" r="2.4" style="animation-delay:-2.55s" /><circle class="tw" cx="397.6" cy="165.1" r="2.4" style="animation-delay:-2.92s" /></g>
+        <g fill="#FFD98A"><circle cx="2.4" cy="165.1" r="6" fill-opacity=".22" /><circle cx="27.1" cy="170.7" r="6" fill-opacity=".22" /><circle cx="51.8" cy="175.5" r="6" fill-opacity=".22" /><circle cx="76.5" cy="179.7" r="6" fill-opacity=".22" /><circle cx="101.2" cy="183.0" r="6" fill-opacity=".22" /><circle cx="125.9" cy="185.6" r="6" fill-opacity=".22" /><circle cx="150.6" cy="187.5" r="6" fill-opacity=".22" /><circle cx="175.3" cy="188.6" r="6" fill-opacity=".22" /><circle cx="200.0" cy="189.0" r="6" fill-opacity=".22" /><circle cx="224.7" cy="188.6" r="6" fill-opacity=".22" /><circle cx="249.4" cy="187.5" r="6" fill-opacity=".22" /><circle cx="274.1" cy="185.6" r="6" fill-opacity=".22" /><circle cx="298.8" cy="183.0" r="6" fill-opacity=".22" /><circle cx="323.5" cy="179.7" r="6" fill-opacity=".22" /><circle cx="348.2" cy="175.5" r="6" fill-opacity=".22" /><circle cx="372.9" cy="170.7" r="6" fill-opacity=".22" /><circle cx="397.6" cy="165.1" r="6" fill-opacity=".22" /><circle class="tw" cx="2.4" cy="165.1" r="2.4" style="animation-delay:-0.00s" /><circle class="tw" cx="27.1" cy="170.7" r="2.4" style="animation-delay:-0.37s" /><circle class="tw" cx="51.8" cy="175.5" r="2.4" style="animation-delay:-0.74s" /><circle class="tw" cx="76.5" cy="179.7" r="2.4" style="animation-delay:-1.11s" /><circle class="tw" cx="101.2" cy="183.0" r="2.4" style="animation-delay:-1.48s" /><circle class="tw" cx="125.9" cy="185.6" r="2.4" style="animation-delay:-1.85s" /><circle class="tw" cx="150.6" cy="187.5" r="2.4" style="animation-delay:-2.22s" /><circle class="tw" cx="175.3" cy="188.6" r="2.4" style="animation-delay:-2.59s" /><circle class="tw" cx="200.0" cy="189.0" r="2.4" style="animation-delay:-2.96s" /><circle class="tw" cx="224.7" cy="188.6" r="2.4" style="animation-delay:-0.33s" /><circle class="tw" cx="249.4" cy="187.5" r="2.4" style="animation-delay:-0.70s" /><circle class="tw" cx="274.1" cy="185.6" r="2.4" style="animation-delay:-1.07s" /><circle class="tw" cx="298.8" cy="183.0" r="2.4" style="animation-delay:-1.44s" /><circle class="tw" cx="323.5" cy="179.7" r="2.4" style="animation-delay:-1.81s" /><circle class="tw" cx="348.2" cy="175.5" r="2.4" style="animation-delay:-2.18s" /><circle class="tw" cx="372.9" cy="170.7" r="2.4" style="animation-delay:-2.55s" /><circle class="tw" cx="397.6" cy="165.1" r="2.4" style="animation-delay:-2.92s" /></g>
         <g class="sway" style="animation-delay:-1s">
           <path d="M70 168 V186" stroke="#E8C677" stroke-opacity=".6" stroke-width=".8" />
           <circle cx="70" cy="198" r="16" fill="url(#lgGlow)" />
@@ -1245,6 +1258,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=3353543f"></script>
+<script src="app.js?v=3b5b32aa"></script>
 </body>
 </html>
