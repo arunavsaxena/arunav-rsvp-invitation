@@ -6,8 +6,9 @@
   // Countdown target: Carnival Lunch, 27 Jan 2027, 1:00 PM IST.
   var TARGET = new Date("2027-01-27T13:00:00+05:30").getTime();
 
-  // Who to call. Add numbers in international format ("+91 98xxx xxxxx").
-  // A person with no number is listed by name only, without call buttons.
+  // Who to call: names and roles only. Phone numbers are never in this public
+  // file; the backend sends them (Script Property CONTACTS) only when the page
+  // was opened with a valid invite key.
   var CONTACTS = [
     { name: "Sunil Kumar Saxena", role: "Groom’s father", phone: "" },
     { name: "Sarita Saxena", role: "Groom’s mother", phone: "" },
@@ -344,17 +345,21 @@
   setInterval(tick, 1000);
 
   // ---- Contacts -----------------------------------------------------------
+  var renderContacts;
   (function () {
     var phoneIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>';
     var waIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.4L3 21Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.3-1.8-1-1 .8a4 4 0 0 1-2.2-2.2l.8-1-1-1.8L9 9.5Z"/></svg>';
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-    document.getElementById("contact-list").innerHTML = CONTACTS.map(function (p) {
+    renderContacts = function (list, note) {
+    document.getElementById("contact-list").innerHTML = list.map(function (p) {
       var digits = (p.phone || "").replace(/[^\d+]/g, "");
       var acts = digits ? '<div class="acts"><a class="ic" href="tel:' + esc(digits) + '" aria-label="Call ' + esc(p.name) + '">' + phoneIcon + '</a>' +
         '<a class="ic" href="https://wa.me/' + esc(digits.replace(/^\+/, "")) + '" target="_blank" rel="noopener" aria-label="WhatsApp ' + esc(p.name) + '">' + waIcon + '</a></div>' : "";
       return '<div class="person"><div><div class="pn">' + esc(p.name) + '</div><div class="pr">' + esc(p.role) + '</div>' +
         (p.phone ? '<div class="ph">' + esc(p.phone) + '</div>' : "") + '</div>' + acts + '</div>';
-    }).join("");
+    }).join("") + (note ? '<p class="contacts-note">' + esc(note) + '</p>' : "");
+    };
+    renderContacts(CONTACTS, INVITE_KEY ? "" : "Phone numbers appear when you open the link from your invitation.");
   })();
 
   // ---- RSVP ---------------------------------------------------------------
@@ -641,6 +646,22 @@
     thanks.hidden = false;
     thanks.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
   });
+
+  // Phone numbers come from the backend, only for visitors holding the invite key.
+  (function loadContactNumbers() {
+    if (!INVITE_KEY || !RSVP_ENDPOINT.trim()) return;
+    var CACHE = "sa-contacts";
+    try {
+      var cached = JSON.parse(sessionStorage.getItem(CACHE) || "null");
+      if (cached && cached.length) { renderContacts(cached, ""); return; }
+    } catch (e) {}
+    post({ kind: "contacts" }).then(function (j) {
+      var list = Array.isArray(j.contacts) ? j.contacts.filter(function (c) { return c && c.name; }) : [];
+      if (!list.length) return;
+      renderContacts(list, "");
+      try { sessionStorage.setItem(CACHE, JSON.stringify(list)); } catch (e) {}
+    }).catch(function () { /* keep names without numbers */ });
+  })();
 
   document.getElementById("rsvp-reset").addEventListener("click", function () {
     form.reset();

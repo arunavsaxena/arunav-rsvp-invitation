@@ -43,9 +43,11 @@ v=$(shasum app.js | cut -c1-8); sed -i '' "s#app.js?v=[a-f0-9]*#app.js?v=$v#" in
 
 All of these are at the top of `app.js`:
 
-- `CONTACTS`: groom's side only. Phone numbers are **empty**; a person with no
-  number is listed by name only, with no Call or WhatsApp buttons. Fill them in as
-  `"+91 98xxx xxxxx"`.
+- `CONTACTS`: names and roles for "Who to call". **Phone numbers are not in this
+  repo.** They live in the Apps Script project's Script Properties under
+  `CONTACTS`, as JSON, and the backend returns them only to visitors who opened
+  the invite link (valid key). Example value:
+  `[{"name":"Sunil Kumar Saxena","role":"Groom’s father","phone":"+91 98xxx xxxxx"}]`
 - `TARGET`: the countdown target, currently the Carnival Lunch (27 Jan 2027, 1:00 PM IST).
 - `RSVP_ENDPOINT`: the Apps Script web app that receives RSVPs and ID proofs (see below).
   It is public by design; the invite key is what protects it.

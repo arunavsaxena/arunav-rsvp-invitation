@@ -5,8 +5,10 @@
  * (Execute as: Me, Who has access: Anyone).
  *
  * Security model
- * - Write-only: no request can read anything back. Responses carry only
- *   { ok } or a short error message; never file links or sheet data.
+ * - Write-only for guest data: no request can read RSVPs or files back.
+ *   Responses carry only { ok }, a short error, or (for 'contacts') the
+ *   family's phone numbers, which are kept in Script Properties as CONTACTS
+ *   so they never appear in the public page or repo.
  * - Invitation key: every request must carry the key stored in Script
  *   Properties as INVITE_KEY (made by setupInviteKey). It is in the invite
  *   link (?k=...), never in the public repo. Without it nothing is written.
@@ -53,6 +55,7 @@ function doPost(e) {
     if (body.website) return json_({ ok: true });   // bot trap: pretend success, store nothing
     if (body.kind === 'file') { saveFile_(body); return json_({ ok: true }); }
     if (body.kind === 'rsvp') { saveRsvp_(body); return json_({ ok: true }); }
+    if (body.kind === 'contacts') return json_({ ok: true, contacts: contacts_() });
     throw new Reject('Unknown request.');
   } catch (err) {
     if (!(err instanceof Reject)) console.error(err);
@@ -185,6 +188,29 @@ function saveRsvp_(b) {
 }
 
 // ---------------------------------------------------------------------------
+
+/**
+ * Family contact numbers for the "Who to call" section, served only with a
+ * valid invite key. Stored in Script Properties under CONTACTS as JSON:
+ *   [{"name":"Sunil Kumar Saxena","role":"Groom's father","phone":"+91 98xxx xxxxx"}, ...]
+ */
+function contacts_() {
+  var raw = PropertiesService.getScriptProperties().getProperty('CONTACTS');
+  if (!raw) return [];
+  try {
+    var list = JSON.parse(raw);
+    if (!Array.isArray(list)) return [];
+    return list.slice(0, 12).map(function (c) {
+      return {
+        name: clean_(c && c.name, 60),
+        role: clean_(c && c.role, 40),
+        phone: String((c && c.phone) || '').replace(/[^\d+ ]/g, '').trim().slice(0, 20)
+      };
+    }).filter(function (c) { return c.name; });
+  } catch (e) {
+    return [];
+  }
+}
 
 function rsvpSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
