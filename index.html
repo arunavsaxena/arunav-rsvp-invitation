@@ -231,6 +231,17 @@
     font: 400 16px/1.5 var(--serif); color: var(--muted); }
   .travel-note svg { width: 22px; height: 22px; flex-shrink: 0; color: var(--maroon); margin-top: 1px; }
   .travel-note b { font-weight: 600; color: var(--ink); }
+  .id-help { margin: 0 0 12px; font: 400 16px/1.5 var(--serif); color: var(--muted); }
+  .guest-ids { display: grid; gap: 12px; }
+  .guest-id .g-title { font: 500 19px var(--serif); color: var(--maroon); }
+  .file-drop { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 12px 14px; border: 1px dashed #C8B699;
+    border-radius: 12px; background: #FFFBF2; cursor: pointer; font: 400 15px var(--sans); color: var(--muted); transition: border-color .2s, background .2s; }
+  .file-drop:hover { border-color: var(--gold); }
+  .file-drop:focus-within { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .file-drop input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+  .file-drop svg { width: 20px; height: 20px; flex-shrink: 0; color: var(--maroon); }
+  .file-drop .fd-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .file-drop.has-file { border-style: solid; border-color: var(--maroon); background: #FBF0E8; color: var(--ink); }
   legend { padding: 0; margin-bottom: 10px; }
   #rsvp-error { font: 400 14px var(--sans); color: var(--sindoor); }
   .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 14px 24px; border-radius: 999px; cursor: pointer;
@@ -649,10 +660,6 @@
           <label class="lbl" for="rsvp-phone">Phone number</label>
           <input class="fld" id="rsvp-phone" name="phone" type="tel" required placeholder="+91" autocomplete="tel" inputmode="tel" />
         </div>
-        <div class="fld-wrap">
-          <label class="lbl" for="rsvp-email">Email <span class="opt">(optional)</span></label>
-          <input class="fld" id="rsvp-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
-        </div>
 
         <div id="attending-only" style="display:grid;gap:20px">
           <div class="fld-wrap">
@@ -705,17 +712,22 @@
           </fieldset>
           <p class="travel-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Zm0-4h16M8 21l2-3m6 3-2-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="14.5" r="1" fill="currentColor"/><circle cx="16" cy="14.5" r="1" fill="currentColor"/></svg><span>Coming by train? We will arrange pick-up and drop from <b>Kathgodam railway station</b>.</span></p>
           <fieldset>
-            <legend class="lbl">Is a driver travelling with you? <span class="opt">(optional)</span></legend>
+            <legend class="lbl">Is a driver travelling with you?</legend>
             <div class="choices">
               <label class="chip"><input type="radio" name="driver" value="Yes" /><span class="tick"><svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" fill="none" stroke="#fff" stroke-width="2" /></svg></span><span class="c-main">Yes</span></label>
               <label class="chip"><input type="radio" name="driver" value="No" /><span class="tick"><svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" fill="none" stroke="#fff" stroke-width="2" /></svg></span><span class="c-main">No</span></label>
             </div>
           </fieldset>
+          <fieldset>
+            <legend class="lbl">Identity proof for each guest</legend>
+            <p class="id-help">Aadhaar, driving licence or passport only, as a photo or PDF up to 5 MB. We need one for every guest for hotel check-in. Files go to a private folder that only our family can open.</p>
+            <div class="guest-ids" id="guest-ids"></div>
+          </fieldset>
         </div>
 
         <div id="rsvp-error" hidden role="alert"></div>
         <button type="submit" id="rsvp-submit" class="btn btn-solid">Send RSVP</button>
-        <div class="fine">Please let us know at the earliest so we can plan stays and pickups.</div>
+        <div class="fine">All fields are required. Please reply at the earliest so we can plan stays and pickups.</div>
       </form>
     </div>
   </section>
@@ -757,19 +769,9 @@
     { name: "Arunav", role: "Groom", phone: "" }
   ];
 
-  // Same Google Form as save-the-date.arunav.work, so replies from both pages
-  // land in one Sheet. README.md explains the field ids.
-  var GOOGLE_FORM = {
-    id: "1FAIpQLSewM_dhebvTa_yj5_W1KRt9gX3bUjafmIamG2t1-gl1lzRrcg",
-    fields: {
-      name:          "entry.1224194294",
-      phone:         "entry.883360929",
-      email:         "entry.857968569",
-      functionsText: "entry.771900964",
-      guests:        "entry.1672330680",
-      requests:      "entry.355334609"
-    }
-  };
+  // RSVPs and ID proofs go to the Google Apps Script web app in
+  // apps-script/Code.gs (bound to your Google Sheet). Paste its /exec URL here.
+  // README.md has the setup steps. Until it is set, the form will not submit.
   var RSVP_ENDPOINT = "";
   var STORE_KEY = "sa-wedding-invite-rsvps";
 
@@ -878,90 +880,226 @@
   var errorBox = document.getElementById("rsvp-error");
   var submitBtn = document.getElementById("rsvp-submit");
   var attendingOnly = document.getElementById("attending-only");
+  var nameInput = document.getElementById("rsvp-name");
+  var phoneInput = document.getElementById("rsvp-phone");
+  var guestSel = document.getElementById("rsvp-guests");
+  var idsHost = document.getElementById("guest-ids");
+
+  var ID_TYPES = ["Aadhaar", "Driving licence", "Passport"];
+  var OK_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif", "application/pdf"];
+  var MAX_FILE = 5 * 1024 * 1024;
+  var MAX_RAW_IMAGE = 25 * 1024 * 1024;
+  var uploadIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
 
   function attending() { return (new FormData(form)).get("attending") !== "no"; }
   function syncAttending() { attendingOnly.hidden = !attending(); }
   form.querySelectorAll('input[name="attending"]').forEach(function (r) { r.addEventListener("change", syncAttending); });
   function showError(msg) { errorBox.textContent = msg; errorBox.hidden = !msg; }
 
-  function postToGoogleForm(entry) {
-    if (!GOOGLE_FORM.id) return Promise.resolve();
-    var body = new URLSearchParams();
-    Object.keys(GOOGLE_FORM.fields).forEach(function (key) {
-      body.append(GOOGLE_FORM.fields[key], entry[key] == null ? "" : String(entry[key]));
+  // One ID row per guest, kept in step with the guest count.
+  function guestRow(i) {
+    var row = document.createElement("div");
+    row.className = "trip guest-id";
+    row.innerHTML =
+      '<div class="g-title">Guest ' + (i + 1) + (i === 0 ? ' <span class="opt" style="font:400 14px var(--sans);color:var(--faint)">(you)</span>' : '') + '</div>' +
+      '<div class="fld-wrap"><label class="sublbl" for="gid-name-' + i + '">Full name as on ID</label>' +
+      '<input class="fld" id="gid-name-' + i + '" data-role="g-name" autocomplete="off" /></div>' +
+      '<div class="fld-wrap"><label class="sublbl" for="gid-type-' + i + '">ID type</label>' +
+      '<select class="fld" id="gid-type-' + i + '" data-role="g-type"><option value="">Select</option>' +
+      ID_TYPES.map(function (t) { return "<option>" + t + "</option>"; }).join("") + '</select></div>' +
+      '<div class="fld-wrap"><label class="sublbl" for="gid-file-' + i + '">ID proof</label>' +
+      '<label class="file-drop">' + uploadIcon + '<span class="fd-text">Choose photo or PDF</span>' +
+      '<input type="file" id="gid-file-' + i + '" data-role="g-file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf" /></label></div>';
+    var file = row.querySelector('[data-role="g-file"]');
+    var drop = row.querySelector(".file-drop");
+    file.addEventListener("change", function () {
+      var f = file.files[0];
+      drop.querySelector(".fd-text").textContent = f ? f.name : "Choose photo or PDF";
+      drop.classList.toggle("has-file", !!f);
     });
-    // Google Forms sends no CORS headers: no-cors gives an opaque response,
-    // so a rejected reply looks the same as a saved one. Test against the Sheet.
-    return fetch("https://docs.google.com/forms/d/e/" + GOOGLE_FORM.id + "/formResponse",
-      { method: "POST", mode: "no-cors", body: body }).catch(function () {});
+    if (i === 0) {
+      var n = row.querySelector('[data-role="g-name"]');
+      n.value = nameInput.value;
+      n.dataset.auto = "1";
+      n.addEventListener("input", function () { n.dataset.auto = ""; });
+    }
+    return row;
   }
-  function postToEndpoint(entry) {
-    var endpoint = RSVP_ENDPOINT.trim();
-    if (!endpoint) return Promise.resolve();
-    return fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(entry) }).catch(function () {});
+  function syncGuests() {
+    var n = Math.max(1, +guestSel.value || 1);
+    while (idsHost.children.length < n) idsHost.appendChild(guestRow(idsHost.children.length));
+    while (idsHost.children.length > n) idsHost.removeChild(idsHost.lastChild);
+  }
+  guestSel.addEventListener("change", syncGuests);
+  nameInput.addEventListener("input", function () {
+    var g = idsHost.querySelector('[data-role="g-name"]');
+    if (g && g.dataset.auto) g.value = nameInput.value;
+  });
+  syncGuests();
+
+  function fileType(f) {
+    if (f.type) return f.type === "image/jpg" ? "image/jpeg" : f.type;
+    var ext = (f.name.split(".").pop() || "").toLowerCase();
+    return { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", heic: "image/heic", heif: "image/heif", pdf: "application/pdf" }[ext] || "";
   }
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+  // Phone photos are large: shrink them to a readable JPEG before upload.
+  function shrinkImage(file) {
+    return new Promise(function (resolve) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var max = 1800, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement("canvas");
+        c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { resolve(b); }, "image/jpeg", .85);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); resolve(null); };
+      img.src = url;
+    });
+  }
+  function toBase64(blob) {
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function () { resolve(String(r.result).split(",")[1] || ""); };
+      r.onerror = function () { reject(new Error("Could not read the file")); };
+      r.readAsDataURL(blob);
+    });
+  }
+  async function prepareFile(file) {
+    var type = fileType(file);
+    if (/^image\/(jpeg|png|webp)$/.test(type)) {
+      var small = await shrinkImage(file);
+      if (small && small.size <= MAX_FILE && (small.size < file.size || file.size > MAX_FILE)) return { blob: small, type: "image/jpeg" };
+    }
+    if (file.size > MAX_FILE) throw new Error(file.name + " is larger than 5 MB");
+    return { blob: file, type: type };
+  }
+
+  function post(payload) {
+    // text/plain keeps this a simple request, so Apps Script needs no CORS preflight.
+    return fetch(RSVP_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j || !j.ok) throw new Error((j && j.error) || "the server did not accept it"); return j; });
+  }
+
+  function newId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+  }
+
+  function invalid(msg, el) {
+    showError(msg);
+    if (el) { el.focus(); if (el.scrollIntoView) el.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" }); }
+    return null;
+  }
+
+  function collect() {
     var fd = new FormData(form);
-    var name = (fd.get("name") || "").trim();
-    var phone = (fd.get("phone") || "").trim();
     var going = attending();
+    var data = { name: (fd.get("name") || "").trim(), phone: (fd.get("phone") || "").trim(), attending: going ? "Yes" : "No" };
+    if (!data.name) return invalid("Please tell us your name.", nameInput);
+    if (data.phone.replace(/\D/g, "").length < 10) return invalid("Please add a phone number we can reach you on.", phoneInput);
+    if (!going) return { data: data, guests: [] };
 
-    if (!name) { showError("Please tell us your name."); form.name.focus(); return; }
-    if (phone.replace(/\D/g, "").length < 7) { showError("Please add a phone number we can reach you on."); form.phone.focus(); return; }
+    data.guests = String(+guestSel.value || 1);
+    var checks = [
+      ["arriveBy", "Please tell us whether you are arriving by road or train.", form.querySelector('input[name="arriveBy"]')],
+      ["arriveTime", "Please add your arrival time.", document.getElementById("rsvp-arrive-time")],
+      ["departBy", "Please tell us whether you are leaving by road or train.", form.querySelector('input[name="departBy"]')],
+      ["departTime", "Please add your departure time.", document.getElementById("rsvp-depart-time")],
+      ["driver", "Please tell us whether a driver is travelling with you.", form.querySelector('input[name="driver"]')]
+    ];
+    for (var c = 0; c < checks.length; c++) {
+      if (!fd.get(checks[c][0])) return invalid(checks[c][1], checks[c][2]);
+    }
+    data.arriveBy = fd.get("arriveBy"); data.arriveDate = fd.get("arriveDate"); data.arriveTime = fd.get("arriveTime");
+    data.departBy = fd.get("departBy"); data.departDate = fd.get("departDate"); data.departTime = fd.get("departTime");
+    data.driver = fd.get("driver");
+
+    var guests = [];
+    var rows = idsHost.querySelectorAll(".guest-id");
+    for (var i = 0; i < rows.length; i++) {
+      var nm = rows[i].querySelector('[data-role="g-name"]');
+      var tp = rows[i].querySelector('[data-role="g-type"]');
+      var fl = rows[i].querySelector('[data-role="g-file"]');
+      var label = "guest " + (i + 1);
+      if (!nm.value.trim()) return invalid("Please add the full name of " + label + ".", nm);
+      if (ID_TYPES.indexOf(tp.value) === -1) return invalid("Please choose the ID type for " + label + ".", tp);
+      var f = fl.files[0];
+      if (!f) return invalid("Please upload an ID proof for " + label + ".", fl);
+      var t = fileType(f);
+      if (OK_TYPES.indexOf(t) === -1) return invalid("The ID for " + label + " must be a photo or a PDF.", fl);
+      var cap = (t === "application/pdf" || /heic|heif/.test(t)) ? MAX_FILE : MAX_RAW_IMAGE;
+      if (f.size > cap) {
+        return invalid("The ID for " + label + " is too large. Please use a file under 5 MB.", fl);
+      }
+      guests.push({ name: nm.value.trim(), idType: tp.value, file: f });
+    }
+    return { data: data, guests: guests };
+  }
+
+  function setBusy(text) {
+    submitBtn.disabled = !!text;
+    submitBtn.textContent = text || "Send RSVP";
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var got = collect();
+    if (!got) return;
     showError("");
+    if (!RSVP_ENDPOINT.trim()) {
+      showError("RSVPs are not connected yet. Please call or message us for now.");
+      return;
+    }
 
-    function fmtTime(t) {
-      if (!t) return "";
-      var h = +t.slice(0, 2), m = t.slice(3, 5);
-      return (h % 12 || 12) + ":" + m + (h < 12 ? " am" : " pm");
+    var id = newId();
+    var d = got.data;
+    try {
+      for (var i = 0; i < got.guests.length; i++) {
+        var g = got.guests[i];
+        setBusy("Uploading ID " + (i + 1) + " of " + got.guests.length + "…");
+        var prepared = await prepareFile(g.file);
+        await post({
+          kind: "file", submissionId: id, primaryName: d.name, index: i,
+          guestName: g.name, idType: g.idType, mimeType: prepared.type, data: await toBase64(prepared.blob)
+        });
+      }
+      setBusy("Saving your RSVP…");
+      var row = Object.assign({ kind: "rsvp", submissionId: id }, d, {
+        ids: got.guests.map(function (g) { return { name: g.name, idType: g.idType }; })
+      });
+      await post(row);
+    } catch (err) {
+      setBusy("");
+      showError("We could not send your RSVP (" + (err && err.message || "network error") + "). Please try again, or call us.");
+      return;
     }
-    function leg(key) {
-      return [fd.get(key + "By") && ("by " + fd.get(key + "By").toLowerCase()), fd.get(key + "Date"), fmtTime(fd.get(key + "Time"))].filter(Boolean).join(", ");
-    }
-    var arrival = going ? leg("arrive") : "";
-    var departure = going ? leg("depart") : "";
-    var driver = going ? (fd.get("driver") || "") : "";
-    var travel = [arrival && ("Arrival: " + arrival), departure && ("Departure: " + departure), driver && ("Driver: " + driver)].filter(Boolean).join(" | ");
-    var entry = {
-      source: "invitation",
-      attending: going ? "yes" : "no",
-      name: name,
-      phone: phone,
-      email: (fd.get("email") || "").trim(),
-      functionsText: going ? "Both days" : "Not attending",
-      guests: going ? fd.get("guests") : "0",
-      arrival: arrival,
-      departure: departure,
-      driver: driver,
-      requests: travel,
-      submittedAt: new Date().toISOString()
-    };
 
     try {
       var saved = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
-      saved.push(entry);
+      saved.push(Object.assign({ submittedAt: new Date().toISOString(), submissionId: id }, d));
       localStorage.setItem(STORE_KEY, JSON.stringify(saved));
-    } catch (err) { /* storage unavailable */ }
+    } catch (err2) { /* storage unavailable */ }
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Sending…";
-    Promise.all([postToGoogleForm(entry), postToEndpoint(entry)]).catch(function () {}).then(function () {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Send RSVP";
-      document.getElementById("ty-title").textContent = going ? "Dhanyavaad" : "We will miss you";
-      document.getElementById("ty-msg").textContent = going
-        ? "Your reply is with us. We cannot wait to welcome you in Jim Corbett."
-        : "Thank you for letting us know. Your blessings mean the world to us.";
-      form.hidden = true;
-      thanks.hidden = false;
-      thanks.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
-    });
+    setBusy("");
+    var going = d.attending === "Yes";
+    document.getElementById("ty-title").textContent = going ? "Dhanyavaad" : "We will miss you";
+    document.getElementById("ty-msg").textContent = going
+      ? "Your reply and ID proofs are with us. We cannot wait to welcome you in Jim Corbett."
+      : "Thank you for letting us know. Your blessings mean the world to us.";
+    form.hidden = true;
+    thanks.hidden = false;
+    thanks.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
   });
 
   document.getElementById("rsvp-reset").addEventListener("click", function () {
     form.reset();
+    idsHost.innerHTML = "";
+    syncGuests();
     syncAttending();
     form.hidden = false;
     thanks.hidden = true;

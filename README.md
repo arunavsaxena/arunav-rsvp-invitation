@@ -27,26 +27,47 @@ All of these are at the top of the `<script>` block in `index.html`:
   number is listed by name only, with no Call or WhatsApp buttons. Fill them in as
   `"+91 98xxx xxxxx"`.
 - `TARGET`: the countdown target, currently the Carnival Lunch (27 Jan 2027, 1:00 PM IST).
-- `GOOGLE_FORM` / `RSVP_ENDPOINT`: where RSVPs go (see below).
+- `RSVP_ENDPOINT`: the Apps Script web app that receives RSVPs and ID proofs (see below).
 
-## RSVPs
+## RSVPs and ID proofs
 
-The RSVP posts to the **same Google Form as save-the-date**, so replies from both
-pages land in one Sheet. Field mapping is in `save-the-date/README.md`. Replies from
-this page look like this:
+Every field is required. A guest who declines gives only name and phone. A guest
+who attends also gives the guest count, arrival and departure (road or train, date,
+time), whether a driver is coming, and **one ID proof per guest** (Aadhaar, driving
+licence or passport, as a photo or PDF up to 5 MB). Phone photos are shrunk to a
+1800px JPEG in the browser before upload.
 
-- **Functions attending** is `Both days`, or `Not attending` for a decline.
-- **Special requests** holds the travel details, for example
-  `Arrival: by train, Wed, 27 Jan, 11:00 am | Departure: by road, Fri, 29 Jan, 10:00 am | Driver: Yes`.
-  Arrival and departure each have a mode (road or train), a date and a time.
-  Arrival date is 27 Jan (default) or 28 Jan; departure is 28 Jan or 29 Jan (default).
-  Driver is an optional Yes/No. The Form has no separate travel questions.
-- **Number of guests** is `0` for a decline.
-- **Message for us** is left empty.
+Google Forms cannot take file uploads from a web page, so RSVPs go to a small
+**Google Apps Script web app** (`apps-script/Code.gs`) that you deploy once:
 
-Each reply is also saved in the guest's browser under `localStorage`
-`sa-wedding-invite-rsvps`. The Google Forms response is opaque (`no-cors`), so
-**send one test reply and confirm it reaches the Sheet** before sharing the link.
+1. Open the Google Sheet that should hold RSVPs. The save-the-date responses Sheet
+   works; replies go to a new **Invitation RSVPs** tab.
+2. **Extensions → Apps Script**. Replace the contents of `Code.gs` with
+   `apps-script/Code.gs` from this repo and save.
+3. **Deploy → New deployment → Web app**. Set *Execute as* to **Me** and
+   *Who has access* to **Anyone**. Deploy, approve the Drive and Sheets permissions,
+   and copy the **Web app URL** (it ends in `/exec`).
+4. Paste that URL into `RSVP_ENDPOINT` at the top of the `<script>` block in
+   `index.html`, then commit and push.
+5. Send one test RSVP with a dummy ID, check the row and the file, then delete both.
+
+What you get:
+
+- **Invitation RSVPs** tab: one row per reply with every answer, the list of
+  guests and their ID types, and a link to that reply's ID folder.
+- **Wedding RSVP ID proofs** folder in your Drive: one subfolder per reply, named
+  after the guest, with files like `2 - Priya Sharma - Aadhaar.jpg`. The folder is
+  private to you; share it only with whoever handles hotel check-in.
+
+If you change `Code.gs` later, use **Deploy → Manage deployments → Edit → New
+version** so the URL stays the same.
+
+Until `RSVP_ENDPOINT` is set, the form validates but will not send. It tells the
+guest to call instead. The page itself cannot check that an upload really is an
+Aadhaar, licence or passport; it only limits the type and the file format.
+
+A copy of each reply, without the files, is saved in the guest's browser under
+`localStorage` `sa-wedding-invite-rsvps`.
 
 ## Publishing
 
@@ -62,5 +83,6 @@ to the public `arunavsaxena.github.io` repo.
 ## Before sharing with guests
 
 - [ ] Add phone numbers in `CONTACTS`
-- [ ] Send a test RSVP, check it reaches the Sheet, then delete the test row
+- [ ] Deploy `apps-script/Code.gs` and set `RSVP_ENDPOINT`
+- [ ] Send a test RSVP with a dummy ID, check the row and file, then delete both
 - [ ] Confirm the Engagement start time: the itinerary says "6:00 / 7:00 PM"; the page shows 6:00 PM
