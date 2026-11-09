@@ -246,10 +246,11 @@
     });
     // Block-print textures drift slower than the content for a sense of depth.
     var textured = Array.prototype.slice.call(document.querySelectorAll(".hero, .letter-sec, .events, .rsvp"));
-    // Parallax repaints large areas each frame; phones scroll smoother without it.
+    // On phones, skip only the texture drift: moving a background repaints the
+    // whole section every frame. Everything else is cheap enough for phones.
     var smallScreen = window.matchMedia ? window.matchMedia("(max-width: 759px)") : { matches: false };
     function parallax() {
-      if (reduceMotion || lite || smallScreen.matches) return;
+      if (reduceMotion || lite) return;
       var y = window.scrollY, vh = window.innerHeight;
       if (heroImg) heroImg.setAttribute("transform", "translate(0 " + Math.min(24, y * 0.05).toFixed(2) + ")");
       arts.forEach(function (g) {
@@ -270,7 +271,7 @@
         var d = (r.top + r.height / 2 - vh / 2);
         f.el.style.transform = (f.base ? f.base + " " : "") + "translateY(" + (d * f.speed).toFixed(1) + "px)";
       });
-      textured.forEach(function (sec) {
+      if (!smallScreen.matches) textured.forEach(function (sec) {
         var r = sec.getBoundingClientRect();
         if (r.bottom < 0 || r.top > vh) return;
         sec.style.backgroundPosition = "0 " + (r.top * -0.12).toFixed(1) + "px, 0 0";
