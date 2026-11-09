@@ -192,7 +192,6 @@
       var t0 = null, id = ++gliding;
       var root = document.documentElement, prev = root.style.scrollBehavior;
       root.style.scrollBehavior = "auto";
-      root.style.scrollSnapType = "none";   // don't let gentle snap hijack the glide
       function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
       function step(ts) {
         if (id !== gliding) return;
@@ -200,11 +199,11 @@
         var k = Math.min(1, (ts - t0) / dur);
         window.scrollTo(0, start + dist * ease(k));
         if (k < 1) requestAnimationFrame(step);
-        else root.style.scrollBehavior = prev;   // snap comes back on the next touch or wheel (stopGlide)
+        else root.style.scrollBehavior = prev;
       }
       requestAnimationFrame(step);
     }
-    function stopGlide() { gliding++; document.documentElement.style.scrollBehavior = ""; document.documentElement.style.scrollSnapType = ""; }
+    function stopGlide() { gliding++; document.documentElement.style.scrollBehavior = ""; }
     window.addEventListener("wheel", stopGlide, { passive: true });
     window.addEventListener("touchstart", stopGlide, { passive: true });
     links.forEach(function (a, i) {
@@ -247,8 +246,10 @@
     });
     // Block-print textures drift slower than the content for a sense of depth.
     var textured = Array.prototype.slice.call(document.querySelectorAll(".hero, .letter-sec, .events, .rsvp"));
+    // Parallax repaints large areas each frame; phones scroll smoother without it.
+    var smallScreen = window.matchMedia ? window.matchMedia("(max-width: 759px)") : { matches: false };
     function parallax() {
-      if (reduceMotion || lite) return;
+      if (reduceMotion || lite || smallScreen.matches) return;
       var y = window.scrollY, vh = window.innerHeight;
       if (heroImg) heroImg.setAttribute("transform", "translate(0 " + Math.min(24, y * 0.05).toFixed(2) + ")");
       arts.forEach(function (g) {
