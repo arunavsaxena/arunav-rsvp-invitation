@@ -686,10 +686,13 @@
   // Phone numbers come from the backend, only for visitors holding the invite key.
   (function loadContactNumbers() {
     if (!INVITE_KEY || !RSVP_ENDPOINT.trim()) return;
-    var CACHE = "sa-contacts";
+    // Show the remembered list at once, but always refresh it, so a change to the
+    // contacts reaches visitors who opened the page earlier.
+    var CACHE = "sa-contacts-2";
     try {
+      sessionStorage.removeItem("sa-contacts");
       var cached = JSON.parse(sessionStorage.getItem(CACHE) || "null");
-      if (cached && cached.length) { renderContacts(cached, ""); return; }
+      if (cached && cached.length) renderContacts(cached, "");
     } catch (e) {}
     post({ kind: "contacts" }).then(function (j) {
       var list = Array.isArray(j.contacts) ? j.contacts.filter(function (c) { return c && c.name; }) : [];
