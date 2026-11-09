@@ -134,22 +134,41 @@
   .families > .reveal { position: relative; }
 
   /* ---------- Section nav + parallax ---------- */
+  /* Liquid-glass pill: frosted, saturated backdrop with a bright rim, a top sheen,
+     and a glass "lens" that slides to the current section. */
   .section-nav { position: fixed; z-index: 60; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 2px; padding: 5px;
-    border-radius: 999px; background: rgba(74,15,26,.86); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-    box-shadow: 0 10px 28px rgba(30,6,12,.3), inset 0 0 0 1px rgba(232,198,119,.28);
-    transform: translate(-50%, 140%); opacity: 0; transition: transform .45s cubic-bezier(.2,.7,.2,1), opacity .35s ease; }
+    border-radius: 999px; isolation: isolate; overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,252,246,.74) 0%, rgba(255,248,238,.56) 55%, rgba(255,244,230,.64) 100%);
+    -webkit-backdrop-filter: blur(20px) saturate(185%); backdrop-filter: blur(20px) saturate(185%);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow: 0 14px 34px rgba(46,20,24,.22), 0 2px 6px rgba(46,20,24,.12),
+      inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(255,255,255,.25), inset 0 0 18px rgba(255,255,255,.22);
+    transform: translate(-50%, 140%); opacity: 0;
+    transition: transform .5s cubic-bezier(.2,.8,.2,1.1), opacity .35s ease, background .4s ease, border-color .4s ease; }
+  .section-nav::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(120% 90% at 22% -10%, rgba(255,255,255,.75), rgba(255,255,255,0) 55%),
+      radial-gradient(80% 60% at 90% 120%, rgba(255,214,150,.25), rgba(255,214,150,0) 60%); }
   .section-nav.show { transform: translate(-50%, 0); opacity: 1; }
-  .section-nav a { display: flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px; font: 600 10px var(--sans); letter-spacing: .16em; text-transform: uppercase;
-    color: rgba(251,239,220,.78); white-space: nowrap; transition: background .25s, color .25s; }
-  .section-nav a:hover { color: #FFF4E0; }
-  .section-nav a[aria-current="true"] { background: var(--gold-pale); color: var(--maroon-deep); }
-  .section-nav a:focus-visible { outline: 2px solid var(--gold-pale); outline-offset: 2px; }
+  .section-nav .lens { position: absolute; z-index: 0; top: 5px; left: 0; height: calc(100% - 10px); width: 0; border-radius: 999px; pointer-events: none; opacity: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,250,240,.66));
+    box-shadow: 0 4px 12px rgba(74,15,26,.16), inset 0 1px 0 #fff, inset 0 -2px 6px rgba(184,137,59,.18), 0 0 0 1px rgba(255,255,255,.6);
+    transition: transform .55s cubic-bezier(.34,1.45,.5,1), width .55s cubic-bezier(.34,1.45,.5,1), opacity .3s ease, background .4s ease; }
+  .section-nav a { position: relative; z-index: 1; display: flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px;
+    font: 600 10px var(--sans); letter-spacing: .16em; text-transform: uppercase; white-space: nowrap;
+    color: rgba(74,15,26,.78); text-shadow: 0 1px 0 rgba(255,255,255,.5); transition: color .3s ease; }
+  .section-nav a:hover { color: var(--maroon-deep); }
+  .section-nav a[aria-current="true"] { color: var(--maroon-deep); }
+  .section-nav a:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .section-nav { background: rgba(255,250,242,.96); }
+  }
   #events, #rsvp, #venue, #letter, #invite { scroll-margin-top: 8px; }
   .footer-pad { height: 64px; }
   .ev-art .px { transform-box: view-box; transform-origin: 50% 50%; transform: scale(1.07); will-change: transform; }
   .rangoli { will-change: transform; }
   @media (min-width: 760px) {
     .section-nav { bottom: 22px; padding: 6px; }
+    .section-nav .lens { top: 6px; height: calc(100% - 12px); }
     .section-nav a { padding: 0 18px; font-size: 10.5px; }
   }
 
@@ -1173,6 +1192,7 @@
 </main>
 
 <nav class="section-nav" id="section-nav" aria-label="Sections">
+  <span class="lens" aria-hidden="true"></span>
   <a href="#invite">Invite</a>
   <a href="#letter">Letter</a>
   <a href="#venue">Venue</a>
@@ -1180,6 +1200,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=85717349"></script>
+<script src="app.js?v=86651a24"></script>
 </body>
 </html>

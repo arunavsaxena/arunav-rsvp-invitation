@@ -137,6 +137,7 @@
     var hero = document.querySelector(".hero");
     var footer = document.querySelector("footer");
     var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+    var lens = nav.querySelector(".lens");
 
     // Eased glide to a section. CSS smooth-scroll is near-instant over long
     // distances, so this animates it explicitly (a jump for reduced motion).
@@ -180,6 +181,17 @@
       var current = -1;
       targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top <= vh * 0.4) current = i; });
       links.forEach(function (a, i) { if (i === current) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+
+      // Slide the glass lens under the current link.
+      if (current >= 0) {
+        var l = links[current];
+        lens.style.width = l.offsetWidth + "px";
+        lens.style.transform = "translateX(" + l.offsetLeft + "px)";
+        lens.style.opacity = "1";
+      } else {
+        lens.style.opacity = "0";
+      }
+
     }
 
     // ---- Parallax: photo drifts in its arch, art drifts in its panels ----
