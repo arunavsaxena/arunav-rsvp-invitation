@@ -245,7 +245,7 @@
       return { el: el, speed: parseFloat(el.getAttribute("data-px")) || 0, base: el.getAttribute("data-px-base") || "" };
     });
     // Block-print textures drift slower than the content for a sense of depth.
-    var textured = Array.prototype.slice.call(document.querySelectorAll(".hero, .letter-sec, .events, .rsvp"));
+    var textured = Array.prototype.slice.call(document.querySelectorAll(".hero, .letter-sec, .events, .rsvp, .gallery"));
     function parallax() {
       if (reduceMotion || lite) return;
       var y = window.scrollY, vh = window.innerHeight;
@@ -675,4 +675,73 @@
     showError("");
     form.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
   });
+
+  // ---- Gallery strip + lightbox --------------------------------------------
+  (function () {
+    var track = document.getElementById("gal-track");
+    if (!track) return;
+    var files = track.getAttribute("data-full").split(",");
+    var bar = document.getElementById("gal-bar");
+    var prevB = document.querySelector(".gal-nav.prev"), nextB = document.querySelector(".gal-nav.next");
+
+    function step() { var it = track.querySelector(".gal-item"); return it ? it.getBoundingClientRect().width + 22 : 260; }
+    function syncStrip() {
+      var max = track.scrollWidth - track.clientWidth;
+      var p = max > 0 ? track.scrollLeft / max : 0;
+      var share = max > 0 ? Math.max(.12, track.clientWidth / track.scrollWidth) : 1;
+      bar.style.width = (share * 100) + "%";
+      bar.style.transform = "translateX(" + (p * (1 / share - 1) * 100) + "%)";
+      prevB.disabled = track.scrollLeft < 4;
+      nextB.disabled = track.scrollLeft > max - 4;
+    }
+    track.addEventListener("scroll", syncStrip, { passive: true });
+    window.addEventListener("resize", syncStrip);
+    prevB.addEventListener("click", function () { track.scrollBy({ left: -step() * 2, behavior: reduceMotion ? "auto" : "smooth" }); });
+    nextB.addEventListener("click", function () { track.scrollBy({ left: step() * 2, behavior: reduceMotion ? "auto" : "smooth" }); });
+    syncStrip();
+
+    var lb = document.getElementById("lightbox"), img = document.getElementById("lb-img"), count = document.getElementById("lb-count");
+    var at = 0, lastFocus = null;
+    function show(i) {
+      at = (i + files.length) % files.length;
+      img.src = "assets/gallery/" + files[at] + ".jpg";
+      img.alt = "Arunav and Shambhavi at their roka, photo " + (at + 1);
+      count.textContent = (at + 1) + " / " + files.length;
+      [at + 1, at - 1].forEach(function (k) { var pre = new Image(); pre.src = "assets/gallery/" + files[(k + files.length) % files.length] + ".jpg"; });
+    }
+    function open(i) {
+      lastFocus = document.activeElement;
+      show(i);
+      lb.hidden = false;
+      lock(true);
+      requestAnimationFrame(function () { lb.classList.add("open"); });
+      document.getElementById("lb-close").focus();
+    }
+    function close() {
+      lb.classList.remove("open");
+      lock(false);
+      setTimeout(function () { lb.hidden = true; img.removeAttribute("src"); }, reduceMotion ? 0 : 300);
+      if (lastFocus) lastFocus.focus();
+    }
+    track.querySelectorAll(".gal-frame").forEach(function (b) {
+      b.addEventListener("click", function () { open(+b.getAttribute("data-i")); });
+    });
+    document.getElementById("lb-close").addEventListener("click", close);
+    document.getElementById("lb-prev").addEventListener("click", function () { show(at - 1); });
+    document.getElementById("lb-next").addEventListener("click", function () { show(at + 1); });
+    lb.addEventListener("click", function (e) { if (e.target === lb) close(); });
+    document.addEventListener("keydown", function (e) {
+      if (lb.hidden) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") show(at - 1);
+      else if (e.key === "ArrowRight") show(at + 1);
+    });
+    var x0 = null;
+    lb.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener("touchend", function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 45) show(at + (dx < 0 ? 1 : -1));
+    });
+  })();
 })();
