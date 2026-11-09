@@ -37,9 +37,10 @@ this page look like this:
 
 - **Functions attending** is `Both days`, or `Not attending` for a decline.
 - **Special requests** holds the travel details, for example
-  `Arrival: by train, Wed, 27 Jan, 11:00 am | Departure: by road, Fri, 29 Jan, 10:00 am | Drivers: 1`.
-  Arrival and departure each have a mode (road or train), a date and a time;
-  drivers is an optional count. The Form has no separate travel questions.
+  `Arrival: by train, Wed, 27 Jan, 11:00 am | Departure: by road, Fri, 29 Jan, 10:00 am | Driver: Yes`.
+  Arrival and departure each have a mode (road or train), a date and a time.
+  Arrival date is 27 Jan (default) or 28 Jan; departure is 28 Jan or 29 Jan (default).
+  Driver is an optional Yes/No. The Form has no separate travel questions.
 - **Number of guests** is `0` for a decline.
 - **Message for us** is left empty.
 

@@ -661,10 +661,7 @@
               <div class="fld-wrap">
                 <label class="sublbl" for="rsvp-arrive-date">Date</label>
                 <select class="fld" id="rsvp-arrive-date" name="arriveDate">
-                <option value="">Select</option>
-                <option>Mon, 25 Jan</option>
-                <option>Tue, 26 Jan</option>
-                <option>Wed, 27 Jan</option>
+                <option selected>Wed, 27 Jan</option>
                 <option>Thu, 28 Jan</option>
                 </select>
               </div>
@@ -684,10 +681,8 @@
               <div class="fld-wrap">
                 <label class="sublbl" for="rsvp-depart-date">Date</label>
                 <select class="fld" id="rsvp-depart-date" name="departDate">
-                <option value="">Select</option>
                 <option>Thu, 28 Jan</option>
-                <option>Fri, 29 Jan</option>
-                <option>Sat, 30 Jan</option>
+                <option selected>Fri, 29 Jan</option>
                 </select>
               </div>
               <div class="fld-wrap">
@@ -697,12 +692,13 @@
             </div>
           </fieldset>
           <p class="travel-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Zm0-4h16M8 21l2-3m6 3-2-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="14.5" r="1" fill="currentColor"/><circle cx="16" cy="14.5" r="1" fill="currentColor"/></svg><span>Coming by train? We will arrange pick-up and drop from <b>Kathgodam railway station</b>.</span></p>
-          <div class="fld-wrap">
-            <label class="lbl" for="rsvp-drivers">Drivers travelling with you <span class="opt">(optional)</span></label>
-            <select class="fld" id="rsvp-drivers" name="drivers">
-              <option value="0">No driver</option><option value="1">1 driver</option><option value="2">2 drivers</option><option value="3">3 drivers</option><option value="4">4 drivers</option>
-            </select>
-          </div>
+          <fieldset>
+            <legend class="lbl">Is a driver travelling with you? <span class="opt">(optional)</span></legend>
+            <div class="choices">
+              <label class="chip"><input type="radio" name="driver" value="Yes" /><span class="tick"><svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" fill="none" stroke="#fff" stroke-width="2" /></svg></span><span class="c-main">Yes</span></label>
+              <label class="chip"><input type="radio" name="driver" value="No" /><span class="tick"><svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" fill="none" stroke="#fff" stroke-width="2" /></svg></span><span class="c-main">No</span></label>
+            </div>
+          </fieldset>
         </div>
 
         <div id="rsvp-error" hidden role="alert"></div>
@@ -914,8 +910,8 @@
     }
     var arrival = going ? leg("arrive") : "";
     var departure = going ? leg("depart") : "";
-    var drivers = going ? +(fd.get("drivers") || 0) : 0;
-    var travel = [arrival && ("Arrival: " + arrival), departure && ("Departure: " + departure), drivers && ("Drivers: " + drivers)].filter(Boolean).join(" | ");
+    var driver = going ? (fd.get("driver") || "") : "";
+    var travel = [arrival && ("Arrival: " + arrival), departure && ("Departure: " + departure), driver && ("Driver: " + driver)].filter(Boolean).join(" | ");
     var entry = {
       source: "invitation",
       attending: going ? "yes" : "no",
@@ -926,7 +922,7 @@
       guests: going ? fd.get("guests") : "0",
       arrival: arrival,
       departure: departure,
-      drivers: drivers,
+      driver: driver,
       requests: travel,
       submittedAt: new Date().toISOString()
     };
