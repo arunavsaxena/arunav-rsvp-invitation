@@ -132,6 +132,26 @@
   .rangoli.br { bottom: -140px; right: -140px; }
   .families > .reveal { position: relative; }
 
+  /* ---------- Section nav + parallax ---------- */
+  .section-nav { position: fixed; z-index: 60; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 2px; padding: 5px;
+    border-radius: 999px; background: rgba(74,15,26,.86); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: 0 10px 28px rgba(30,6,12,.3), inset 0 0 0 1px rgba(232,198,119,.28);
+    transform: translate(-50%, 140%); opacity: 0; transition: transform .45s cubic-bezier(.2,.7,.2,1), opacity .35s ease; }
+  .section-nav.show { transform: translate(-50%, 0); opacity: 1; }
+  .section-nav a { padding: 9px 12px; border-radius: 999px; font: 600 9.5px var(--sans); letter-spacing: .16em; text-transform: uppercase;
+    color: rgba(251,239,220,.78); white-space: nowrap; transition: background .25s, color .25s; }
+  .section-nav a:hover { color: #FFF4E0; }
+  .section-nav a[aria-current="true"] { background: var(--gold-pale); color: var(--maroon-deep); }
+  .section-nav a:focus-visible { outline: 2px solid var(--gold-pale); outline-offset: 2px; }
+  #events, #rsvp, #venue, #letter, #invite { scroll-margin-top: 8px; }
+  .footer-pad { height: 64px; }
+  .ev-art .px { transform-box: view-box; transform-origin: 50% 50%; transform: scale(1.07); will-change: transform; }
+  .rangoli { will-change: transform; }
+  @media (min-width: 760px) {
+    .section-nav { bottom: 22px; padding: 6px; }
+    .section-nav a { padding: 10px 18px; font-size: 10px; }
+  }
+
   /* ---------- Invitation wording ---------- */
   .families { background: var(--maroon-deep); color: #FBEFDC; }
   .families .ganesh { display: block; width: 58px; height: 58px; margin: 0 auto 22px; color: var(--gold-pale); }
@@ -526,7 +546,7 @@
         <clipPath id="archClip"><path d="M0 400 V168 C0 98 56 60 104 40 C126 31 142 18 150 0 C158 18 174 31 196 40 C244 60 300 98 300 168 V400 Z" /></clipPath>
       </defs>
       <path d="M-10 410 V166 C-10 92 50 52 100 31 C122 22 140 8 150 -11 C160 8 178 22 200 31 C250 52 310 92 310 166 V410 Z" fill="#FFFBF2" stroke="#C9A35A" stroke-width="1.2" />
-      <image href="assets/couple.jpg" x="0" y="0" width="300" height="400" preserveAspectRatio="xMidYMid slice" clip-path="url(#archClip)" />
+      <g clip-path="url(#archClip)"><image id="hero-img" href="assets/couple.jpg" x="0" y="-24" width="300" height="448" preserveAspectRatio="xMidYMid slice" /></g>
       <path d="M0 400 V168 C0 98 56 60 104 40 C126 31 142 18 150 0 C158 18 174 31 196 40 C244 60 300 98 300 168 V400 Z" fill="none" stroke="#B8893B" stroke-width="2" />
     </svg>
     <div class="hero-text">
@@ -538,7 +558,7 @@
   </section>
 
   <!-- ============ Invitation wording ============ -->
-  <section class="section families zari" data-screen-label="Invitation">
+  <section class="section families zari" data-screen-label="Invitation" id="invite">
     <svg class="rangoli tl" aria-hidden="true"><use href="#mandala" /></svg>
     <svg class="rangoli br" aria-hidden="true"><use href="#mandala" /></svg>
     <div class="reveal">
@@ -597,7 +617,7 @@
   </section>
 
   <!-- ============ Venue ============ -->
-  <section class="section venue" data-screen-label="Venue">
+  <section class="section venue" data-screen-label="Venue" id="venue">
     <svg class="venue-arch" viewBox="0 0 300 600" preserveAspectRatio="none" aria-hidden="true">
       <path d="M6 598 V150 C6 80 70 50 112 34 C132 26 144 14 150 4 C156 14 168 26 188 34 C230 50 294 80 294 150 V598" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2" vector-effect="non-scaling-stroke" />
       <path d="M16 598 V154 C16 90 76 62 116 46 C134 39 145 28 150 19 C155 28 166 39 184 46 C224 62 284 90 284 154 V598" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="1" vector-effect="non-scaling-stroke" />
@@ -632,6 +652,7 @@
           <linearGradient id="cSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3E0" /><stop offset="1" stop-color="#FFC9AE" /></linearGradient>
           <pattern id="stripe" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="8" height="16" fill="#E2386F" /><rect x="8" width="8" height="16" fill="#FFF4E2" /></pattern>
         </defs>
+        <g class="px">
         <rect y="150" width="400" height="210" fill="url(#cSky)" />
         <g transform="translate(290 270)">
           <path d="M0 0 L-34 90 M0 0 L34 90" stroke="#6B3A7A" stroke-width="4" stroke-linecap="round" />
@@ -656,6 +677,7 @@
           <path d="M60 -30 L78 -25 L60 -20 Z" fill="#F2A71B" />
         </g>
         <rect y="352" width="400" height="8" fill="#E9A07E" />
+        </g>
       </svg>
       <div class="facts">
         <div class="fact"><div class="lbl">When</div><div class="val">1:00 to 4:00 pm</div><div class="sub">Wed, 27 Jan</div></div>
@@ -674,6 +696,7 @@
           <linearGradient id="nSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B1433" /><stop offset="1" stop-color="#2E2A5C" /></linearGradient>
           <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         </defs>
+        <g class="px">
         <rect y="150" width="400" height="210" fill="url(#nSky)" />
         <g id="stars-eng"></g>
         <g transform="translate(200 284)" filter="url(#softglow)">
@@ -682,6 +705,7 @@
           <polygon points="13,-30 19,-23 13,-16 7,-23" fill="#FFFFFF" />
         </g>
         <path d="M0 360 V326 Q24 306 46 322 Q64 300 90 318 L310 318 Q336 300 356 318 Q378 306 400 322 V360 Z" fill="#070B1E" />
+        </g>
       </svg>
       <div class="facts">
         <div class="fact"><div class="lbl">When</div><div class="val">6:00 pm onwards</div><div class="sub">Wed, 27 Jan</div></div>
@@ -704,12 +728,14 @@
         <defs>
           <linearGradient id="tSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4DC" /><stop offset="1" stop-color="#F4B86C" /></linearGradient>
         </defs>
+        <g class="px">
         <rect y="150" width="400" height="210" fill="url(#tSky)" />
         <circle cx="200" cy="300" r="86" fill="#FFE7B0" opacity=".7" />
         <use href="#gopuram" transform="translate(70 364) scale(.5)" opacity=".8" />
         <use href="#gopuram" transform="translate(330 364) scale(.5)" opacity=".8" />
         <use href="#gopuram" transform="translate(200 370) scale(.84)" />
         <rect y="354" width="400" height="6" fill="#7A1F2B" opacity=".55" />
+        </g>
       </svg>
       <div class="facts">
         <div class="fact"><div class="lbl">When</div><div class="val">10:00 am to 5:30 pm</div><div class="sub">Thu, 28 Jan</div></div>
@@ -728,12 +754,14 @@
           <linearGradient id="rBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5C0D19" /><stop offset="1" stop-color="#8E1B2C" /></linearGradient>
           <linearGradient id="curtain" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3A0610" /><stop offset=".5" stop-color="#7A1626" /><stop offset="1" stop-color="#4A0A15" /></linearGradient>
         </defs>
+        <g class="px">
         <rect y="150" width="400" height="210" fill="url(#rBg)" />
         <path d="M130 360 V262 C130 228 158 210 180 201 C190 197 197 190 200 182 C203 190 210 197 220 201 C242 210 270 228 270 262 V360" fill="none" stroke="#E8C677" stroke-width="1.6" />
         <path d="M142 360 V264 C142 236 164 220 182 213 C191 209 197 203 200 196 C203 203 209 209 218 213 C236 220 258 236 258 264 V360" fill="none" stroke="#E8C677" stroke-width=".8" opacity=".5" />
         <path d="M0 150 H70 C 62 220 70 290 40 360 H0 Z" fill="url(#curtain)" />
         <path d="M400 150 H330 C 338 220 330 290 360 360 H400 Z" fill="url(#curtain)" />
         <rect y="352" width="400" height="8" fill="#2A040B" />
+        </g>
       </svg>
       <div class="facts">
         <div class="fact"><div class="lbl">When</div><div class="val">8:00 pm onwards</div><div class="sub">Thu, 28 Jan</div></div>
@@ -886,9 +914,18 @@
     <div class="bless reveal">आपके आशीर्वाद की प्रतीक्षा में</div>
     <div class="closing reveal">Arunav &amp; Shambhavi</div>
     <div class="meta">27 &amp; 28 January 2027 · Evara Resort &amp; Spa · Jim Corbett</div>
+    <div class="footer-pad" aria-hidden="true"></div>
   </footer>
 </main>
 
-<script src="app.js"></script>
+<nav class="section-nav" id="section-nav" aria-label="Sections">
+  <a href="#invite">Invite</a>
+  <a href="#letter">Letter</a>
+  <a href="#venue">Venue</a>
+  <a href="#events">Events</a>
+  <a href="#rsvp">RSVP</a>
+</nav>
+
+<script src="app.js?v=288d67de"></script>
 </body>
 </html>

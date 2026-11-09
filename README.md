@@ -21,6 +21,15 @@ Envelope with seal, hero (toran, ॥ श्री गणेशाय नमः �
 wording, आत्मीय निवेदन (Maa's note in Hindi with an English toggle), venue, the four
 events, countdown, RSVP, who to call, footer.
 
+## After editing app.js
+
+`index.html` loads `app.js?v=<hash>` so returning visitors don't keep an old cached
+copy. After changing `app.js`, bump the tag:
+
+```sh
+v=$(shasum app.js | cut -c1-8); sed -i '' "s#app.js?v=[a-f0-9]*#app.js?v=$v#" index.html
+```
+
 ## Things to edit
 
 All of these are at the top of `app.js`:

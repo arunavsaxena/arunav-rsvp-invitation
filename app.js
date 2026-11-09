@@ -109,6 +109,54 @@
     });
   });
 
+  // ---- Section nav: show after the hero, highlight the current section ----
+  (function () {
+    var nav = document.getElementById("section-nav");
+    if (!nav) return;
+    var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+    var hero = document.querySelector(".hero");
+    var footer = document.querySelector("footer");
+    var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+
+    function update() {
+      var y = window.scrollY, vh = window.innerHeight;
+      var pastHero = y > hero.offsetHeight * 0.6;
+      var atFooter = footer.getBoundingClientRect().top < vh * 0.55;
+      nav.classList.toggle("show", pastHero && !atFooter && intro.hidden);
+      var current = -1;
+      targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top <= vh * 0.4) current = i; });
+      links.forEach(function (a, i) { if (i === current) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+    }
+
+    // ---- Parallax: photo drifts in its arch, art drifts in its panels ----
+    var heroImg = document.getElementById("hero-img");
+    var arts = Array.prototype.slice.call(document.querySelectorAll(".ev-art .px"));
+    var rangolis = Array.prototype.slice.call(document.querySelectorAll(".rangoli"));
+    function parallax() {
+      if (reduceMotion) return;
+      var y = window.scrollY, vh = window.innerHeight;
+      if (heroImg) heroImg.setAttribute("transform", "translate(0 " + Math.min(24, y * 0.05).toFixed(2) + ")");
+      arts.forEach(function (g) {
+        var r = g.ownerSVGElement.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        var p = (r.top + r.height / 2 - vh / 2) / vh;          // -1 (above) .. 1 (below)
+        g.style.transform = "translateY(" + (p * -9).toFixed(2) + "px) scale(1.07)";
+      });
+      rangolis.forEach(function (el) { el.style.transform = "rotate(" + (y * 0.02).toFixed(2) + "deg)"; });
+    }
+
+    var queued = false;
+    function onScroll() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; update(); parallax(); });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    document.getElementById("open-invite").addEventListener("click", function () { setTimeout(onScroll, 1700); });
+    onScroll();
+  })();
+
   // ---- Countdown ----------------------------------------------------------
   var cd = { d: document.getElementById("cd-days"), h: document.getElementById("cd-hours"), m: document.getElementById("cd-minutes"), s: document.getElementById("cd-seconds") };
   function pad(n) { return String(n).padStart(2, "0"); }
