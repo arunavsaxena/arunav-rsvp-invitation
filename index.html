@@ -275,7 +275,7 @@
   .venue { position: relative; background: var(--ivory); overflow: hidden; overflow: clip; }
   .venue > * { position: relative; }
   /* Plinth at the foot of the arch: fixed-size lines (not stretched with the arch) so the diyas always sit on it. */
-  .venue > .venue-base { position: absolute; left: 50%; bottom: 34px; width: min(380px, 90%); transform: translateX(-50%);
+  .venue-frame > .venue-base { position: absolute; left: 50%; bottom: 34px; width: min(380px, 90%); transform: translateX(-50%);
     display: flex; align-items: flex-end; justify-content: space-between; padding: 0 32px 15px; pointer-events: none; }
   .venue-base::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 15px; box-sizing: border-box;
     border-top: 1.2px solid rgba(184,137,59,.5); border-bottom: 1.2px solid rgba(184,137,59,.5);
@@ -284,7 +284,8 @@
   .venue-base .foot.l { left: 0; } .venue-base .foot.r { right: 0; }
   .venue-base .vdiya { width: 34px; height: 30px; }
   .venue-base .vorn { width: 110px; height: 18px; color: var(--gold); margin-bottom: 4px; }
-  .venue > .venue-arch { position: absolute; left: 50%; top: 34px; bottom: 34px; width: min(380px, 90%); height: calc(100% - 68px); transform: translateX(-50%); color: var(--gold); pointer-events: none; }
+  .venue-frame { position: absolute; inset: 0; pointer-events: none; }
+  .venue-frame > .venue-arch { position: absolute; left: 50%; top: 34px; bottom: 34px; width: min(380px, 90%); height: calc(100% - 68px); transform: translateX(-50%); color: var(--gold); pointer-events: none; }
   .venue img.logo { width: min(230px, 62vw); height: auto; margin: 26px auto 22px; mix-blend-mode: multiply; }
   .venue h3 { font: 500 clamp(26px, 6.5vw, 34px) var(--serif); margin: 0; color: var(--ink); }
   .venue .addr { font: 500 18px/1.8 var(--serif); color: #4E3E34; margin: 12px 0 18px; }
@@ -760,6 +761,7 @@
 
   <!-- ============ Venue ============ -->
   <section class="section venue" data-screen-label="Venue" id="venue">
+    <div class="venue-frame" aria-hidden="true" data-px="-0.05">
     <svg class="venue-arch" viewBox="0 0 300 600" preserveAspectRatio="none" aria-hidden="true">
       <path d="M6 598 V150 C6 80 70 50 112 34 C132 26 144 14 150 4 C156 14 168 26 188 34 C230 50 294 80 294 150 V598" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2" vector-effect="non-scaling-stroke" />
       <path d="M16 598 V154 C16 90 76 62 116 46 C134 39 145 28 150 19 C155 28 166 39 184 46 C224 62 284 90 284 154 V598" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="1" vector-effect="non-scaling-stroke" />
@@ -769,6 +771,7 @@
       <svg class="vdiya" viewBox="0 0 46 40"><use href="#diya" /></svg>
       <svg class="vorn" viewBox="0 0 140 22"><use href="#orn" /></svg>
       <svg class="vdiya" viewBox="0 0 46 40"><use href="#diya" /></svg>
+    </div>
     </div>
     <div class="kicker reveal" style="margin-top:28px">The venue</div>
     <svg class="orn reveal" aria-hidden="true"><use href="#orn" /></svg>
@@ -1284,6 +1287,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=6df84d37"></script>
+<script src="app.js?v=df7caafc"></script>
 </body>
 </html>
