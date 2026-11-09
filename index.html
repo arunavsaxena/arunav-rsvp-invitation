@@ -211,10 +211,6 @@
     scroll-snap-type: x mandatory; scroll-padding: 0 24px; padding: 14px 24px 22px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .gal-track::-webkit-scrollbar { display: none; }
   .gal-item { flex: 0 0 68%; max-width: 300px; scroll-snap-align: center; }
-  /* Landscape photos get a broader arch so both faces stay in frame. */
-  .gal-track { align-items: center; }
-  .gal-item.wide { flex-basis: 88%; max-width: 440px; }
-  .gal-item.wide .gal-frame { aspect-ratio: 4 / 3; }
   .gal-frame { --arch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' preserveAspectRatio='none'%3E%3Cpath d='M0 400V150C0 85 52 50 98 32C120 24 140 12 150 0C160 12 180 24 202 32C248 50 300 85 300 150V400Z'/%3E%3C/svg%3E"); position: relative; display: block; width: 100%; aspect-ratio: 3 / 4; padding: 7px; border: 0; cursor: zoom-in;
     background: linear-gradient(150deg, rgba(255,255,255,.95), rgba(232,198,119,.75) 35%, rgba(255,250,238,.85) 60%, rgba(201,163,90,.8));
     -webkit-mask: var(--arch) center / 100% 100% no-repeat; mask: var(--arch) center / 100% 100% no-repeat;
@@ -243,7 +239,6 @@
   @media (min-width: 760px) {
     .gal-track { padding: 16px max(48px, calc(50% - 560px)) 26px; scroll-padding: 0 max(48px, calc(50% - 560px)); gap: 22px; }
     .gal-item { flex-basis: 250px; scroll-snap-align: start; }
-    .gal-item.wide { flex-basis: 444px; max-width: none; }
     .gal-nav { display: grid; }
   }
 
@@ -1347,12 +1342,11 @@
     <svg class="orn reveal" aria-hidden="true"><use href="#orn" /></svg>
     <div class="gal-wrap reveal">
       <button type="button" class="gal-nav prev" aria-label="Previous photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
-      <ul class="gal-track" id="gal-track" data-full="r1,r2,r3,r4,r5">
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="0" aria-label="Open photo 1 of 5"><img src="assets/gallery/t-r1.jpg" alt="Arunav and Shambhavi at their roka, photo 1" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="1" aria-label="Open photo 2 of 5"><img src="assets/gallery/t-r2.jpg" alt="Arunav and Shambhavi at their roka, photo 2" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="2" aria-label="Open photo 3 of 5"><img src="assets/gallery/t-r3.jpg" alt="Arunav and Shambhavi at their roka, photo 3" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="3" aria-label="Open photo 4 of 5"><img src="assets/gallery/t-r4.jpg" alt="Arunav and Shambhavi at their roka, photo 4" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item wide"><button type="button" class="gal-frame" data-i="4" aria-label="Open photo 5 of 5"><img src="assets/gallery/t-r5.jpg" alt="Arunav and Shambhavi at their roka, photo 5" loading="lazy" decoding="async" /></button></li>
+      <ul class="gal-track" id="gal-track" data-full="r1,r2,r3,r4">
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="0" aria-label="Open photo 1 of 4"><img src="assets/gallery/t-r1.jpg" alt="Arunav and Shambhavi at their roka, photo 1" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="1" aria-label="Open photo 2 of 4"><img src="assets/gallery/t-r2.jpg" alt="Arunav and Shambhavi at their roka, photo 2" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="2" aria-label="Open photo 3 of 4"><img src="assets/gallery/t-r3.jpg" alt="Arunav and Shambhavi at their roka, photo 3" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="3" aria-label="Open photo 4 of 4"><img src="assets/gallery/t-r4.jpg" alt="Arunav and Shambhavi at their roka, photo 4" loading="lazy" decoding="async" /></button></li>
       </ul>
       <button type="button" class="gal-nav next" aria-label="Next photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
     </div>
