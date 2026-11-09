@@ -30,6 +30,15 @@ copy. After changing `app.js`, bump the tag:
 v=$(shasum app.js | cut -c1-8); sed -i '' "s#app.js?v=[a-f0-9]*#app.js?v=$v#" index.html
 ```
 
+## Guest experience notes
+
+- The envelope plays once per browser session and is skipped for deep links
+  (`.../?k=...#rsvp`), so reloads and "jump to RSVP" links go straight in.
+- **Add to calendar** downloads one `.ics` with all four events (times in IST,
+  stored as UTC). Edit `icsFile()` in `app.js` if timings change.
+- After replying, guests see a summary of what they sent. If they open the form
+  again on the same device, a note says they already replied.
+
 ## Things to edit
 
 All of these are at the top of `app.js`:

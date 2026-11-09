@@ -75,13 +75,31 @@
   // ---- Envelope -----------------------------------------------------------
   var intro = document.getElementById("intro");
   function lock(on) { document.documentElement.style.overflow = on ? "hidden" : ""; document.body.style.overflow = on ? "hidden" : ""; }
-  lock(true);
-  document.getElementById("open-invite").addEventListener("click", function () {
-    lock(false);
-    window.scrollTo(0, 0);
-    intro.classList.add("is-open");
-    setTimeout(function () { intro.hidden = true; }, reduceMotion ? 50 : 1600);
-  });
+  var SEEN_KEY = "sa-envelope-opened";
+  var seen = false;
+  try { seen = sessionStorage.getItem(SEEN_KEY) === "1"; } catch (e) {}
+  if (seen || location.hash) {
+    intro.hidden = true;
+  } else {
+    lock(true);
+    var sealBtn = document.getElementById("open-invite");
+    try { sealBtn.focus({ preventScroll: true }); } catch (e) {}
+    var opened = false;
+    var openEnvelope = function () {
+      if (opened) return;
+      opened = true;
+      try { sessionStorage.setItem(SEEN_KEY, "1"); } catch (e) {}
+      lock(false);
+      window.scrollTo(0, 0);
+      intro.classList.add("is-open");
+      setTimeout(function () { intro.hidden = true; window.dispatchEvent(new Event("scroll")); }, reduceMotion ? 50 : 1600);
+    };
+    sealBtn.addEventListener("click", openEnvelope);
+    document.querySelector("#intro .env").addEventListener("click", openEnvelope);
+    document.addEventListener("keydown", function (e) {
+      if (!opened && (e.key === "Enter" || e.key === " " || e.key === "Escape")) { e.preventDefault(); openEnvelope(); }
+    });
+  }
 
   // ---- Reveal on scroll ---------------------------------------------------
   var reveals = document.querySelectorAll(".reveal");
@@ -110,6 +128,8 @@
   });
 
   // ---- Section nav: show after the hero, highlight the current section ----
+  var glide = function (el) { el.scrollIntoView(); };
+  var typing = false;
   (function () {
     var nav = document.getElementById("section-nav");
     if (!nav) return;
@@ -121,6 +141,7 @@
     // Eased glide to a section. CSS smooth-scroll is near-instant over long
     // distances, so this animates it explicitly (a jump for reduced motion).
     var gliding = 0;
+    glide = function (el) { glideTo(el); };
     function glideTo(el) {
       var start = window.scrollY;
       var end = Math.max(0, el.getBoundingClientRect().top + start - 8);
@@ -155,7 +176,7 @@
       var y = window.scrollY, vh = window.innerHeight;
       var pastHero = y > hero.offsetHeight * 0.6;
       var atFooter = footer.getBoundingClientRect().top < vh * 0.55;
-      nav.classList.toggle("show", pastHero && !atFooter && intro.hidden);
+      nav.classList.toggle("show", pastHero && !atFooter && intro.hidden && !typing);
       var current = -1;
       targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top <= vh * 0.4) current = i; });
       links.forEach(function (a, i) { if (i === current) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
@@ -185,10 +206,56 @@
       requestAnimationFrame(function () { queued = false; update(); parallax(); });
     }
     window.addEventListener("scroll", onScroll, { passive: true });
+    // On phones the keyboard pushes fixed elements up; keep the nav out of the way while typing.
+    document.addEventListener("focusin", function (e) {
+      if (e.target.matches && e.target.matches("input, select, textarea")) { typing = true; update(); }
+    });
+    document.addEventListener("focusout", function () { typing = false; setTimeout(update, 50); });
     window.addEventListener("resize", onScroll);
-    document.getElementById("open-invite").addEventListener("click", function () { setTimeout(onScroll, 1700); });
+
     onScroll();
   })();
+
+  // ---- In-page links that glide (hero RSVP button, scroll cue) ------------
+  document.querySelectorAll("[data-glide]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      var t = document.querySelector(a.getAttribute("href"));
+      if (!t) return;
+      e.preventDefault();
+      glide(t);
+    });
+  });
+
+  // ---- Add to calendar (.ics with all four events) -------------------------
+  function icsFile() {
+    var loc = "Evara Resort & Spa\\, Village Bhalon\\, Patkote\\, Ramnagar\\, Jim Corbett\\, Uttarakhand 263159";
+    var events = [
+      ["carnival", "Carnival Lunch · Arunav & Shambhavi", "20270127T073000Z", "20270127T103000Z", "Lunch\\, hi-tea by the pool\\, mehendi and carnival games. Restaurant & Pool Lawn."],
+      ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Lagan\\, tilak and the ring ceremony\\, followed by a cocktail sangeet. Banquet Hall & Small Lawn."],
+      ["shaadi", "Shaadi · Arunav & Shambhavi", "20270128T043000Z", "20270128T120000Z", "Baraat\\, varmala and phere. Big Lawn & Poolside."],
+      ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Our first dance\\, performances by friends and dinner. Big Lawn & Banquet Hall."]
+    ];
+    var stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arunav and Shambhavi//Wedding//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+    events.forEach(function (e) {
+      lines.push("BEGIN:VEVENT", "UID:" + e[0] + "-2027@arunav-rsvp-invitation.arunav.work", "DTSTAMP:" + stamp,
+        "DTSTART:" + e[2], "DTEND:" + e[3], "SUMMARY:" + e[1], "LOCATION:" + loc, "DESCRIPTION:" + e[4], "END:VEVENT");
+    });
+    lines.push("END:VCALENDAR");
+    return lines.join("\r\n");
+  }
+  document.querySelectorAll("[data-ics]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var url = URL.createObjectURL(new Blob([icsFile()], { type: "text/calendar;charset=utf-8" }));
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "Arunav-Shambhavi-wedding.ics";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    });
+  });
 
   // ---- Countdown ----------------------------------------------------------
   var cd = { d: document.getElementById("cd-days"), h: document.getElementById("cd-hours"), m: document.getElementById("cd-minutes"), s: document.getElementById("cd-seconds") };
@@ -339,11 +406,57 @@
     return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
   }
 
+  function fmtTime(t) {
+    if (!t) return "";
+    var h = +t.slice(0, 2), m = t.slice(3, 5);
+    return (h % 12 || 12) + ":" + m + (h < 12 ? " am" : " pm");
+  }
+  // A guest who already replied from this device sees that, so they don't send duplicates by accident.
+  function showPrevNote() {
+    var n = document.getElementById("rsvp-prev");
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+      var last = saved[saved.length - 1];
+      if (!last || !INVITE_KEY) { n.hidden = true; return; }
+      var when = new Date(last.submittedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+      n.textContent = "You already replied from this device on " + when + ". Sending again adds an updated reply.";
+      n.hidden = false;
+    } catch (e) { n.hidden = true; }
+  }
+  showPrevNote();
+
+  function clearFieldErrors() {
+    form.querySelectorAll(".has-err").forEach(function (w) { w.classList.remove("has-err"); });
+    form.querySelectorAll(".field-err").forEach(function (n) { n.remove(); });
+    form.querySelectorAll("[aria-invalid]").forEach(function (n) { n.removeAttribute("aria-invalid"); });
+  }
+  // Shows the message right under the field it belongs to, as well as by the button.
   function invalid(msg, el) {
+    clearFieldErrors();
     showError(msg);
-    if (el) { el.focus(); if (el.scrollIntoView) el.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" }); }
+    if (el) {
+      var wrap = el.closest(".fld-wrap") || el.closest("fieldset") || el.parentNode;
+      wrap.classList.add("has-err");
+      el.setAttribute("aria-invalid", "true");
+      var note = document.createElement("p");
+      note.className = "field-err";
+      note.id = "err-" + Math.random().toString(36).slice(2, 8);
+      note.textContent = msg;
+      wrap.appendChild(note);
+      el.setAttribute("aria-describedby", note.id);
+      try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+      wrap.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+    }
     return null;
   }
+  form.addEventListener("input", function (e) {
+    var w = e.target.closest && (e.target.closest(".has-err"));
+    if (w) { w.classList.remove("has-err"); var n = w.querySelector(".field-err"); if (n) n.remove(); e.target.removeAttribute("aria-invalid"); showError(""); }
+  });
+  form.addEventListener("change", function (e) {
+    var w = e.target.closest && (e.target.closest(".has-err"));
+    if (w) { w.classList.remove("has-err"); var n = w.querySelector(".field-err"); if (n) n.remove(); e.target.removeAttribute("aria-invalid"); showError(""); }
+  });
 
   function collect() {
     var fd = new FormData(form);
@@ -440,6 +553,17 @@
     document.getElementById("ty-msg").textContent = going
       ? "Your reply and ID proofs are with us. We cannot wait to welcome you in Jim Corbett."
       : "Thank you for letting us know. Your blessings mean the world to us.";
+    var sum = document.getElementById("ty-summary");
+    sum.innerHTML = "";
+    function li(label, text) { var n = document.createElement("li"); var b = document.createElement("b"); b.textContent = label + " "; n.appendChild(b); n.appendChild(document.createTextNode(text)); sum.appendChild(n); }
+    if (going) {
+      li("Guests:", d.guests + (d.guests === "1" ? " person" : " people"));
+      li("Arriving:", d.arriveDate + ", " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
+      li("Leaving:", d.departDate + ", " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
+      li("Driver:", d.driver);
+      li("ID proofs:", got.guests.length + " uploaded");
+    }
+    showPrevNote();
     form.hidden = true;
     thanks.hidden = false;
     thanks.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });

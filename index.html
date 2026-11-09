@@ -30,7 +30,8 @@
     --gold-pale: #E8C677;
     --ink: #2E1F1A;
     --muted: #6E5D51;
-    --faint: #9A8A7C;
+    --faint: #85766A;
+    --gold-text: #8A6424;
     --line: #E3D3B8;
     --serif: 'Cormorant Garamond', Georgia, serif;
     --script: 'Pinyon Script', cursive;
@@ -100,7 +101,7 @@
   .page { position: relative; z-index: 1; width: 100%; max-width: 480px; margin: 0 auto; background: var(--ivory);
     box-shadow: 0 0 90px rgba(10, 2, 12, .55); overflow: hidden; }
   .section { padding: 76px 28px; text-align: center; }
-  .kicker { font: 600 10px var(--sans); letter-spacing: .32em; text-transform: uppercase; color: var(--gold); }
+  .kicker { font: 600 10.5px var(--sans); letter-spacing: .32em; text-transform: uppercase; color: var(--gold-text); }
   .kicker.hi { font: 400 17px var(--deva); letter-spacing: .02em; text-transform: none; color: var(--maroon); }
   .h2 { font: 300 clamp(32px, 9vw, 42px)/1.15 var(--serif); margin: 14px 0 0; color: var(--ink); }
   .rule { width: 44px; height: 1px; background: var(--gold-soft); margin: 24px auto; }
@@ -138,7 +139,7 @@
     box-shadow: 0 10px 28px rgba(30,6,12,.3), inset 0 0 0 1px rgba(232,198,119,.28);
     transform: translate(-50%, 140%); opacity: 0; transition: transform .45s cubic-bezier(.2,.7,.2,1), opacity .35s ease; }
   .section-nav.show { transform: translate(-50%, 0); opacity: 1; }
-  .section-nav a { padding: 9px 12px; border-radius: 999px; font: 600 9.5px var(--sans); letter-spacing: .16em; text-transform: uppercase;
+  .section-nav a { display: flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px; font: 600 10px var(--sans); letter-spacing: .16em; text-transform: uppercase;
     color: rgba(251,239,220,.78); white-space: nowrap; transition: background .25s, color .25s; }
   .section-nav a:hover { color: #FFF4E0; }
   .section-nav a[aria-current="true"] { background: var(--gold-pale); color: var(--maroon-deep); }
@@ -149,8 +150,28 @@
   .rangoli { will-change: transform; }
   @media (min-width: 760px) {
     .section-nav { bottom: 22px; padding: 6px; }
-    .section-nav a { padding: 10px 18px; font-size: 10px; }
+    .section-nav a { padding: 0 18px; font-size: 10.5px; }
   }
+
+  /* ---------- UX helpers ---------- */
+  .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
+  .hero-actions .btn { width: auto; min-width: 150px; }
+  .hero { position: relative; }
+  .scroll-cue { display: flex; flex-direction: column; align-items: center; gap: 6px; width: max-content; margin: 34px auto 0; color: var(--gold-text);
+    font: 600 9.5px var(--sans); letter-spacing: .3em; text-transform: uppercase; }
+  .scroll-cue svg { width: 16px; height: 24px; }
+  .scroll-cue .dot { animation: cue 1.8s ease-in-out infinite; }
+  @keyframes cue { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(8px); opacity: 0; } 100% { opacity: 0; } }
+  .field-err { margin: 6px 0 0; font: 500 13px/1.4 var(--sans); color: var(--sindoor); }
+  .has-err .fld, .has-err .chip, .has-err .file-drop { border-color: var(--sindoor) !important; background: #FFF6F4; }
+  .prev-note { margin: 14px auto 0; max-width: 360px; padding: 10px 14px; border-radius: 12px; background: #F8EEDC; font: 400 14px/1.5 var(--sans); color: var(--muted); }
+  .ty-summary { list-style: none; margin: 18px auto 0; padding: 14px 16px; max-width: 360px; border-radius: 14px; background: #F8EEDC; text-align: left;
+    font: 400 15px/1.6 var(--sans); color: var(--ink); }
+  .ty-summary:empty { display: none; }
+  .ty-summary li + li { margin-top: 4px; }
+  .ty-summary b { font-weight: 600; color: var(--maroon); }
+  .env { cursor: pointer; }
+  @media (max-width: 400px) { .fact .val { font-size: 17.5px; } }
 
   /* ---------- Invitation wording ---------- */
   .families { background: var(--maroon-deep); color: #FBEFDC; }
@@ -231,7 +252,7 @@
   .ev-name { font: 400 clamp(38px, 11vw, 58px)/1.05 var(--script); margin: 0; font-weight: 400; white-space: nowrap; }
   .ev-blurb { font: italic 400 18px/1.5 var(--serif); margin: 8px auto 0; max-width: 320px; color: #5E4E44; text-wrap: balance; }
   .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; padding: 20px 20px 0; margin: 20px 0 0; border-top: 1px dashed var(--line); text-align: left; }
-  .fact .lbl { font: 600 9px var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--faint); }
+  .fact .lbl { font: 600 9.5px var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--faint); }
   .fact .val { margin-top: 5px; font: 500 19px/1.25 var(--serif); color: var(--ink); }
   .fact .sub { margin-top: 3px; font: 500 10px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   .fact.full { grid-column: 1 / -1; }
@@ -296,6 +317,8 @@
   .trip { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #FFFDF8; }
   .trip legend { float: left; width: 100%; margin-bottom: 2px; }
   .trip .chip { background: #FFFBF2; }
+  .trip .two { grid-template-columns: 1.1fr 1fr; }
+  .trip select.fld { padding-left: 12px; padding-right: 30px; background-position: right 12px center; }
   .sublbl { font: 600 9px var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--faint); }
   input[type="time"].fld { min-height: 51px; }
   .travel-note { display: flex; gap: 12px; align-items: flex-start; margin: 0; padding: 14px 16px; border-radius: 12px; background: #F8EEDC;
@@ -564,15 +587,20 @@
         <clipPath id="archClip"><path d="M0 400 V168 C0 98 56 60 104 40 C126 31 142 18 150 0 C158 18 174 31 196 40 C244 60 300 98 300 168 V400 Z" /></clipPath>
       </defs>
       <path d="M-10 410 V166 C-10 92 50 52 100 31 C122 22 140 8 150 -11 C160 8 178 22 200 31 C250 52 310 92 310 166 V410 Z" fill="#FFFBF2" stroke="#C9A35A" stroke-width="1.2" />
-      <g clip-path="url(#archClip)"><image id="hero-img" href="assets/couple.jpg" x="0" y="-24" width="300" height="448" preserveAspectRatio="xMidYMid slice" /></g>
+      <g clip-path="url(#archClip)"><image id="hero-img" href="assets/couple.jpg?v=2" x="0" y="-24" width="300" height="448" preserveAspectRatio="xMidYMid slice" /></g>
       <path d="M0 400 V168 C0 98 56 60 104 40 C126 31 142 18 150 0 C158 18 174 31 196 40 C244 60 300 98 300 168 V400 Z" fill="none" stroke="#B8893B" stroke-width="2" />
     </svg>
     <div class="hero-text">
       <h1 class="names reveal">Arunav<span class="amp">&amp;</span>Shambhavi</h1>
       <div class="date-line reveal">27 &amp; 28 January 2027</div>
       <div class="place-line reveal">Evara Resort &amp; Spa · Jim Corbett</div>
+      <div class="hero-actions reveal">
+        <a class="btn btn-solid" href="#rsvp" data-glide>RSVP</a>
+        <button type="button" class="btn btn-ghost" data-ics>Add to calendar</button>
+      </div>
     </div>
     </div>
+    <a class="scroll-cue" href="#invite" data-glide aria-label="Scroll to the invitation"><span>Scroll</span><svg viewBox="0 0 16 24" aria-hidden="true"><rect x="1" y="1" width="14" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="1.2" /><circle class="dot" cx="8" cy="7" r="1.8" fill="currentColor" /></svg></a>
   </section>
 
   <!-- ============ Invitation wording ============ -->
@@ -904,7 +932,7 @@
           <p class="ev-blurb">Baraat, varmala and phere. Seven steps, seven promises.</p>
         </div>
         <div class="facts">
-          <div class="fact"><div class="lbl">When</div><div class="val">10:00 am to 5:30 pm</div><div class="sub">Thu, 28 Jan</div></div>
+          <div class="fact"><div class="lbl">When</div><div class="val">10 am to 5:30 pm</div><div class="sub">Thu, 28 Jan</div></div>
           <div class="fact"><div class="lbl">Where</div><div class="val">Big Lawn &amp; Poolside</div></div>
           <div class="fact full"><div class="lbl">Theme</div><div class="val">South Indian, temple inspired</div></div>
         </div>
@@ -1012,13 +1040,18 @@
         <div class="kicker">Kindly reply</div>
         <h2 class="rsvp-title">RSVP</h2>
         <svg class="orn" style="margin-top:6px" aria-hidden="true"><use href="#orn" /></svg>
-        <p class="lede" style="font-size:17px;margin-top:14px">One reply per family, please. Your arrival details help us plan your stay.</p>
+        <p class="lede" style="font-size:17px;margin-top:14px">One reply per family, please. Every field is needed; your arrival details help us plan your stay and pickup.</p>
+        <p class="prev-note" id="rsvp-prev" hidden></p>
       </div>
 
       <div id="rsvp-thanks" hidden style="text-align:center;padding:22px 0 6px">
         <div class="ty" id="ty-title">Dhanyavaad</div>
-        <p class="lede" id="ty-msg" style="max-width:320px;margin:12px auto 26px">Your reply is with us. We cannot wait to welcome you in Jim Corbett.</p>
-        <button type="button" id="rsvp-reset" class="btn btn-ghost">Send another reply</button>
+        <p class="lede" id="ty-msg" style="max-width:320px;margin:12px auto 0">Your reply is with us. We cannot wait to welcome you in Jim Corbett.</p>
+        <ul class="ty-summary" id="ty-summary"></ul>
+        <div class="hero-actions" style="margin-top:22px">
+          <button type="button" class="btn btn-solid" data-ics>Add to calendar</button>
+          <button type="button" id="rsvp-reset" class="btn btn-ghost">Send an update</button>
+        </div>
       </div>
 
       <div id="rsvp-locked" hidden style="text-align:center;padding:18px 0 4px">
@@ -1110,7 +1143,7 @@
 
         <div id="rsvp-error" hidden role="alert"></div>
         <button type="submit" id="rsvp-submit" class="btn btn-solid">Send RSVP</button>
-        <div class="fine">All fields are required. Please reply at the earliest so we can plan stays and pickups.</div>
+        <div class="fine">Please reply at the earliest so we can plan stays and pickups.</div>
       </form>
     </div>
   </section>
@@ -1147,6 +1180,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=9683df45"></script>
+<script src="app.js?v=85717349"></script>
 </body>
 </html>
