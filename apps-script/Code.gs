@@ -38,7 +38,7 @@ var HEADERS = [
   'Submitted at', 'Attending', 'Name', 'Phone', 'Guests',
   'Arrival by', 'Arrival date', 'Arrival time',
   'Departure by', 'Departure date', 'Departure time',
-  'Driver', 'Guests & ID proofs', 'ID folder', 'Submission id', 'Station pickup'
+  'Driver', 'Guests & ID proofs', 'ID folder', 'Submission id', 'Station pickup', 'Station drop'
 ];
 
 /** A message that is safe to show the guest. Anything else becomes generic. */
@@ -142,7 +142,7 @@ function saveRsvp_(b) {
   if (!/^[+\d\s()\-]{10,20}$/.test(phone) || digits.length < 10 || digits.length > 15) throw new Reject('Please add a valid phone number.');
 
   var row = { attending: b.attending, name: name, phone: phone, guests: '', arriveBy: '', arriveDate: '', arriveTime: '',
-              departBy: '', departDate: '', departTime: '', driver: '', ids: '', folder: '', pickup: '' };
+              departBy: '', departDate: '', departTime: '', driver: '', ids: '', folder: '', pickup: '', drop: '' };
 
   if (b.attending === 'Yes') {
     var guests = Number(b.guests);
@@ -157,6 +157,8 @@ function saveRsvp_(b) {
     oneOf_(b.departBy, MODES, 'departure mode');
     oneOf_(b.departDate, DEPART_DATES, 'departure date');
     time_(b.departTime, 'departure time');
+    var drop = '';
+    if (b.departBy === 'Train' && b.drop) { oneOf_(b.drop, ['Yes', 'No'], 'drop answer'); drop = b.drop; }
     oneOf_(b.driver, ['Yes', 'No'], 'driver answer');
     if (!Array.isArray(b.ids) || b.ids.length !== guests) throw new Reject('Please add the name of every guest.');
     // ID proofs are optional. A guest marked file:false sent none; older pages
@@ -176,7 +178,7 @@ function saveRsvp_(b) {
 
     row.guests = guests; row.arriveBy = b.arriveBy; row.arriveDate = b.arriveDate; row.arriveTime = b.arriveTime;
     row.departBy = b.departBy; row.departDate = b.departDate; row.departTime = b.departTime;
-    row.driver = b.driver; row.ids = list; row.folder = folder ? folder.getUrl() : ''; row.pickup = pickup;
+    row.driver = b.driver; row.ids = list; row.folder = folder ? folder.getUrl() : ''; row.pickup = pickup; row.drop = drop;
   }
 
   bump_('replies', LIMITS.replies10m, LIMITS.repliesDay);
@@ -185,7 +187,7 @@ function saveRsvp_(b) {
     row.attending, row.name, row.phone, row.guests,
     row.arriveBy, row.arriveDate, row.arriveTime,
     row.departBy, row.departDate, row.departTime,
-    row.driver, row.ids, row.folder, b.submissionId, row.pickup
+    row.driver, row.ids, row.folder, b.submissionId, row.pickup, row.drop
   ].map(cell_);
   // Write everything after the timestamp as plain text, so Sheets does not
   // turn "Wed, 27 Jan" into a date in the wrong year or "11:00" into a time.

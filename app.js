@@ -538,17 +538,17 @@
     if (w) { w.classList.remove("has-err"); var n = w.querySelector(".field-err"); if (n) n.remove(); e.target.removeAttribute("aria-invalid"); showError(""); }
   });
 
-  // Ask about a station pickup only when arriving by train.
-  (function () {
-    var q = document.getElementById("pickup-q");
+  // Ask about a station pickup (arrival) or drop (departure) only for train travel.
+  [["arriveBy", "pickup-q", "pickup"], ["departBy", "drop-q", "drop"]].forEach(function (c) {
+    var q = document.getElementById(c[1]);
     function sync() {
-      var train = (form.querySelector('input[name="arriveBy"]:checked') || {}).value === "Train";
+      var train = (form.querySelector('input[name="' + c[0] + '"]:checked') || {}).value === "Train";
       q.hidden = !train;
-      if (!train) form.querySelectorAll('input[name="pickup"]').forEach(function (r) { r.checked = false; });
+      if (!train) form.querySelectorAll('input[name="' + c[2] + '"]').forEach(function (r) { r.checked = false; });
     }
-    form.querySelectorAll('input[name="arriveBy"]').forEach(function (r) { r.addEventListener("change", sync); });
+    form.querySelectorAll('input[name="' + c[0] + '"]').forEach(function (r) { r.addEventListener("change", sync); });
     sync();
-  })();
+  });
 
   function collect() {
     var fd = new FormData(form);
@@ -565,6 +565,7 @@
       ["pickup", "Please tell us whether you need a pickup from the railway station.", form.querySelector('input[name="pickup"]'), function () { return fd.get("arriveBy") === "Train"; }],
       ["departBy", "Please tell us whether you are leaving by road or train.", form.querySelector('input[name="departBy"]')],
       ["departTime", "Please add your departure time.", document.getElementById("rsvp-depart-time")],
+      ["drop", "Please tell us whether you need a drop at the railway station.", form.querySelector('input[name="drop"]'), function () { return fd.get("departBy") === "Train"; }],
       ["driver", "Please tell us whether a driver is travelling with you.", form.querySelector('input[name="driver"]')]
     ];
     for (var c = 0; c < checks.length; c++) {
@@ -573,6 +574,7 @@
     }
     data.arriveBy = fd.get("arriveBy"); data.arriveDate = fd.get("arriveDate"); data.arriveTime = fd.get("arriveTime");
     data.pickup = data.arriveBy === "Train" ? fd.get("pickup") : "";
+    data.drop = fd.get("departBy") === "Train" ? fd.get("drop") : "";
     data.departBy = fd.get("departBy"); data.departDate = fd.get("departDate"); data.departTime = fd.get("departTime");
     data.driver = fd.get("driver");
 
@@ -659,6 +661,7 @@
       li("Arriving:", d.arriveDate + ", " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
       if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? "Yes, please" : "No, thanks");
       li("Leaving:", d.departDate + ", " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
+      if (d.drop) li("Station drop:", d.drop === "Yes" ? "Yes, please" : "No, thanks");
       li("Driver:", d.driver);
       var up = got.guests.filter(function (g) { return g.file; }).length;
       li("ID proofs:", up === got.guests.length ? "all " + up + " uploaded" : up + " of " + got.guests.length + " uploaded");
