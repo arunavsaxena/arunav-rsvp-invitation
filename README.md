@@ -97,6 +97,29 @@ working at once.
 **Finding the invite link again:** run `setupInviteKey` in the Apps Script project.
 It only logs the existing link.
 
+## The bride's side shares this backend
+
+`apps-script/Code.gs` also serves **save-the-date.arunav.work**, the invitation
+from Sonia & Tarun Sharma. That page posts `kind: "rsvp-bride"` to the same `/exec`
+URL, and the script keeps the two sides apart:
+
+| | Groom's side | Bride's side |
+|---|---|---|
+| Sheet tab | Invitation RSVPs | Bride side RSVPs |
+| Invite key | `INVITE_KEY` | `BRIDE_INVITE_KEY` (falls back to `INVITE_KEY` until set) |
+| Contacts property | `CONTACTS` | `CONTACTS_BRIDE` |
+| Rate-limit counter | `replies` | `replies-bride` |
+| Drive folder | Wedding RSVP ID proofs | Bride side RSVP ID proofs (`FOLDER_ID_BRIDE`) |
+| ID proofs | one per guest | optional; a reply with none is still saved |
+
+Run **`setupBrideInviteKey`** once to create her key and tab and log her invite
+link; `rotateBrideInviteKey` replaces it if the link leaks. The groom's side never
+accepts the bride's key.
+
+Redeploying for either side is the same operation, and both pages keep the same
+`/exec` URL — so deploy a **new version of the existing deployment**, never a new
+deployment.
+
 ## Changing the backend
 
 The deployed script is `apps-script/Code.gs` with one difference: `DRIVE_FOLDER_ID`

@@ -1,8 +1,12 @@
 /**
- * RSVP backend for arunav-rsvp-invitation.arunav.work
+ * RSVP backend for both wedding sites:
+ *   - arunav-rsvp-invitation.arunav.work  (groom's side)   kind 'rsvp'
+ *   - save-the-date.arunav.work           (bride's side)   kind 'rsvp-bride'
  *
  * Bound to the RSVP Google Sheet and deployed as a web app
- * (Execute as: Me, Who has access: Anyone).
+ * (Execute as: Me, Who has access: Anyone). Each side writes to its own tab,
+ * has its own invite key and its own rate-limit counters; the bride's form
+ * and its own ID proofs folder. Her ID proofs are optional.
  *
  * Security model
  * - Write-only for guest data: no request can read RSVPs or files back.
@@ -41,6 +45,24 @@ var HEADERS = [
   'Driver', 'Guests & ID proofs', 'ID folder', 'Submission id', 'Station pickup', 'Station drop'
 ];
 
+// --- Bride's side (save-the-date.arunav.work) ------------------------------
+var BRIDE_SHEET_NAME = 'Bride side RSVPs';
+var BRIDE_FOLDER_NAME = 'Bride side RSVP ID proofs';
+// Drive folder for her guests' ID proofs. Set this in the deployed copy only;
+// it stays blank in the public repo. Leave blank to create a new private folder.
+var BRIDE_DRIVE_FOLDER_ID = '';
+var BRIDE_MAX_GUESTS = 10;
+var BRIDE_DAYS = ['Day 1 - Wed 27 Jan', 'Day 2 - Thu 28 Jan'];  // ASCII only: validated values must survive the JSON round-trip into Apps Script
+var BRIDE_MODES = ['Road', 'Train', 'Flight'];
+var BRIDE_ARRIVE_DATES = ['Tue, 26 Jan', 'Wed, 27 Jan', 'Thu, 28 Jan'];
+var BRIDE_ASSISTANCE = ['Accommodation for driver', 'Pick-up required at railway station', 'Special medical care'];
+var BRIDE_HEADERS = [
+  'Submitted at', 'Name', 'Phone', 'Guests', 'Days attending',
+  'Travelling by', 'Arrival date', 'Arrival time',
+  'Special assistance', 'Pick-up station', 'Train', 'Medical note',
+  'Guests & ID proofs', 'IDs uploaded', 'ID folder', 'Submission id'
+];
+
 /** A message that is safe to show the guest. Anything else becomes generic. */
 function Reject(message) { this.message = message; }
 
@@ -51,11 +73,13 @@ function doPost(e) {
     var raw = (e && e.postData && e.postData.contents) || '';
     if (raw.length > 9 * 1024 * 1024) throw new Reject('That upload is too large.');
     var body = JSON.parse(raw || '{}');
-    checkKey_(body.key);
+    var side = (body.kind === 'rsvp-bride' || body.side === 'bride') ? 'bride' : 'groom';
+    checkKey_(body.key, side);
     if (body.website) return json_({ ok: true });   // bot trap: pretend success, store nothing
     if (body.kind === 'file') { saveFile_(body); return json_({ ok: true }); }
     if (body.kind === 'rsvp') { saveRsvp_(body); return json_({ ok: true }); }
-    if (body.kind === 'contacts') return json_({ ok: true, contacts: contacts_() });
+    if (body.kind === 'rsvp-bride') { saveBrideRsvp_(body); return json_({ ok: true }); }
+    if (body.kind === 'contacts') return json_({ ok: true, contacts: contacts_(side) });
     throw new Reject('Unknown request.');
   } catch (err) {
     if (!(err instanceof Reject)) console.error(err);
@@ -92,10 +116,38 @@ function rotateInviteKey() {
   setupInviteKey();
 }
 
+/**
+ * The same, for the bride's side. Run it once from the editor: it creates the
+ * bride's own invite key and RSVP tab, and logs the link to send her guests.
+ * Until it is run, the bride's page accepts the groom's INVITE_KEY.
+ */
+function setupBrideInviteKey() {
+  var props = PropertiesService.getScriptProperties();
+  var key = props.getProperty('BRIDE_INVITE_KEY');
+  if (!key) {
+    key = (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, '').slice(0, 40);
+    props.setProperty('BRIDE_INVITE_KEY', key);
+  }
+  brideSheet_();
+  console.log('Bride side invite link: https://save-the-date.arunav.work/?k=' + key);
+}
+
+function rotateBrideInviteKey() {
+  PropertiesService.getScriptProperties().deleteProperty('BRIDE_INVITE_KEY');
+  setupBrideInviteKey();
+}
+
 // ---------------------------------------------------------------------------
 
-function checkKey_(key) {
-  var want = PropertiesService.getScriptProperties().getProperty('INVITE_KEY');
+/**
+ * Each side has its own key. The bride's side falls back to INVITE_KEY while
+ * BRIDE_INVITE_KEY is unset, so her page works before setupBrideInviteKey is
+ * run; the groom's side never accepts the bride's key.
+ */
+function checkKey_(key, side) {
+  var props = PropertiesService.getScriptProperties();
+  var want = props.getProperty('INVITE_KEY');
+  if (side === 'bride') want = props.getProperty('BRIDE_INVITE_KEY') || want;
   if (!want || typeof key !== 'string' || key !== want) {
     throw new Reject('This RSVP link is not valid. Please use the link from your invitation.');
   }
@@ -103,6 +155,7 @@ function checkKey_(key) {
 
 function saveFile_(b) {
   checkId_(b.submissionId);
+  var side = b.side === 'bride' ? 'bride' : 'groom';
   var index = Number(b.index);
   if (!(index >= 0 && index < MAX_GUESTS && Math.floor(index) === index)) throw new Reject('Bad guest number.');
   var guestName = text_(b.guestName, 80, 'guest name');
@@ -116,7 +169,7 @@ function saveFile_(b) {
 
   bump_('files', LIMITS.files10m, LIMITS.filesDay);
 
-  var folder = submissionFolder_(b.submissionId, primary, true);
+  var folder = submissionFolder_(b.submissionId, primary, true, side);
   var prefix = (index + 1) + ' - ';
   var files = folder.getFiles(), count = 0;
   while (files.hasNext()) {
@@ -198,15 +251,83 @@ function saveRsvp_(b) {
   cache.put('done:' + b.submissionId, '1', 21600);
 }
 
+/**
+ * Bride's side (save-the-date.arunav.work). No files and no Drive: guests are
+ * asked on the page to send one Aadhaar per family to Vedika or Tarun.
+ */
+function saveBrideRsvp_(b) {
+  checkId_(b.submissionId);
+  var cache = CacheService.getScriptCache();
+  if (cache.get('done:' + b.submissionId)) return;   // repeat of a reply already saved
+
+  var name = text_(b.name, 80, 'name');
+  var phone = String(b.phone || '').trim();
+  var digits = phone.replace(/\D/g, '');
+  if (!/^[+\d\s()\-]{10,20}$/.test(phone) || digits.length < 10 || digits.length > 15) throw new Reject('Please add a valid phone number.');
+
+  var guests = int_(b.guests, 1, BRIDE_MAX_GUESTS, 'number of guests');
+
+  var days = subset_(b.days, BRIDE_DAYS, 'day');
+  if (!days.length) throw new Reject('Please tell us which day or days you will join us.');
+
+  oneOf_(b.travelBy, BRIDE_MODES, 'mode of transport');
+  oneOf_(b.arriveDate, BRIDE_ARRIVE_DATES, 'arrival date');
+  time_(b.arriveTime, 'arrival time');
+
+  var assistance = subset_(b.assistance, BRIDE_ASSISTANCE, 'assistance needed');
+  var station = '', train = '', medical = '';
+  if (assistance.indexOf('Pick-up required at railway station') !== -1) {
+    station = text_(b.pickupStation, 80, 'station');
+    train = clean_(b.pickupTrain, 80);
+  }
+  if (assistance.indexOf('Special medical care') !== -1) {
+    medical = text_(b.medicalNote, 400, 'medical note');
+  }
+
+  // ID proofs are optional here: whatever reached Drive is recorded, and a
+  // reply with none is still a reply.
+  var list = '', folderUrl = '', uploaded = 0;
+  if (b.ids != null) {
+    if (!Array.isArray(b.ids) || b.ids.length > guests) throw new Reject('Please check the ID proofs.');
+    list = b.ids.map(function (g, i) {
+      oneOf_(g && g.idType, ID_TYPES, 'ID type');
+      return (i + 1) + '. ' + text_(g.name, 80, 'guest name') + ' (' + g.idType + ')';
+    }).join('\n');
+  }
+  var folder = submissionFolder_(b.submissionId, name, false, 'bride');
+  if (folder) {
+    var it = folder.getFiles();
+    while (it.hasNext()) { it.next(); uploaded++; }
+    if (uploaded) folderUrl = folder.getUrl();
+  }
+
+  bump_('replies-bride', LIMITS.replies10m, LIMITS.repliesDay);
+
+  var values = [
+    name, phone, String(guests), days.join(', '),
+    b.travelBy, b.arriveDate, b.arriveTime,
+    assistance.join(', '), station, train, medical,
+    list, String(uploaded), folderUrl, b.submissionId
+  ].map(cell_);
+  // Everything after the timestamp is plain text, so Sheets does not read
+  // "Wed, 27 Jan" as a date in the wrong year or "11:00" as a time.
+  var sheet = brideSheet_();
+  var r = sheet.getLastRow() + 1;
+  sheet.getRange(r, 1).setValue(new Date());
+  sheet.getRange(r, 2, 1, values.length).setNumberFormat('@').setValues([values]);
+  cache.put('done:' + b.submissionId, '1', 21600);
+}
+
 // ---------------------------------------------------------------------------
 
 /**
  * Family contact numbers for the "Who to call" section, served only with a
- * valid invite key. Stored in Script Properties under CONTACTS as JSON:
+ * valid invite key. Stored in Script Properties as JSON: CONTACTS for the
+ * groom's side, CONTACTS_BRIDE for the bride's:
  *   [{"name":"Sunil Kumar Saxena","role":"Groom's father","phone":"+91 98xxx xxxxx"}, ...]
  */
-function contacts_() {
-  var raw = PropertiesService.getScriptProperties().getProperty('CONTACTS');
+function contacts_(side) {
+  var raw = PropertiesService.getScriptProperties().getProperty(side === 'bride' ? 'CONTACTS_BRIDE' : 'CONTACTS');
   if (!raw) return [];
   try {
     var list = JSON.parse(raw);
@@ -238,21 +359,42 @@ function rsvpSheet_() {
   return sheet;
 }
 
-function rootFolder_() {
-  if (DRIVE_FOLDER_ID) return DriveApp.getFolderById(DRIVE_FOLDER_ID);
+function brideSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(BRIDE_SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(BRIDE_SHEET_NAME);
+    sheet.appendRow(BRIDE_HEADERS);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, BRIDE_HEADERS.length).setFontWeight('bold');
+  } else if (!sheet.getRange(1, BRIDE_HEADERS.length).getValue()) {
+    // Columns added later get their header on the existing tab.
+    sheet.getRange(1, 1, 1, BRIDE_HEADERS.length).setValues([BRIDE_HEADERS]).setFontWeight('bold');
+  }
+  return sheet;
+}
+
+/** Each side keeps its ID proofs in its own private folder. */
+function rootFolder_(side) {
+  var bride = side === 'bride';
+  var fixed = bride ? BRIDE_DRIVE_FOLDER_ID : DRIVE_FOLDER_ID;
+  if (fixed) return DriveApp.getFolderById(fixed);
   var props = PropertiesService.getScriptProperties();
-  var id = props.getProperty('FOLDER_ID');
+  var key = bride ? 'FOLDER_ID_BRIDE' : 'FOLDER_ID';
+  var id = props.getProperty(key);
   if (id) {
     try { return DriveApp.getFolderById(id); } catch (e) {}
   }
-  var folder = DriveApp.createFolder(FOLDER_NAME);
-  props.setProperty('FOLDER_ID', folder.getId());
+  var folder = DriveApp.createFolder(bride ? BRIDE_FOLDER_NAME : FOLDER_NAME);
+  props.setProperty(key, folder.getId());
   return folder;
 }
 
-function submissionFolder_(submissionId, primaryName, create) {
-  var root = rootFolder_();
-  var name = clean_(primaryName, 60) + ' · ' + String(submissionId).slice(0, 8);
+function submissionFolder_(submissionId, primaryName, create, side) {
+  var root = rootFolder_(side);
+  // ASCII only, like every other literal here: a paste into the Apps Script
+  // editor can transcode non-ASCII, and this one ends up in folder names.
+  var name = clean_(primaryName, 60) + ' - ' + String(submissionId).slice(0, 8);
   var it = root.getFoldersByName(name);
   if (it.hasNext()) return it.next();
   return create ? root.createFolder(name) : null;
@@ -294,6 +436,25 @@ function checkId_(id) {
 
 function oneOf_(v, list, what) {
   if (list.indexOf(v) === -1) throw new Reject('Please choose the ' + what + '.');
+}
+
+/** A whole number inside a range. */
+function int_(v, min, max, what) {
+  var n = Number(v);
+  if (!(n >= min && n <= max && Math.floor(n) === n)) throw new Reject('Please choose the ' + what + '.');
+  return n;
+}
+
+/** Zero or more values from a fixed list, deduplicated, order kept. */
+function subset_(v, list, what) {
+  if (v == null) return [];
+  if (!Array.isArray(v)) throw new Reject('Please choose the ' + what + '.');
+  var out = [];
+  v.slice(0, list.length).forEach(function (x) {
+    oneOf_(x, list, what);
+    if (out.indexOf(x) === -1) out.push(x);
+  });
+  return out;
 }
 
 function time_(v, what) {
