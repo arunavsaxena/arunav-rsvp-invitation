@@ -130,6 +130,54 @@
     });
   }
 
+  // ---- Background music ---------------------------------------------------
+  // Browsers only allow sound after the visitor taps or presses a key, so the
+  // song starts on the first interaction (usually opening the envelope) and
+  // loops. The button mutes it; a muted choice is remembered on this device.
+  (function () {
+    var audio = document.getElementById("bg-music"), btn = document.getElementById("music-btn");
+    if (!audio || !btn) return;
+    var KEY = "sa-music-muted", muted = false, started = false, LEVEL = 0.55;
+    try { muted = localStorage.getItem(KEY) === "1"; } catch (e) {}
+    function ui() {
+      btn.classList.toggle("is-muted", muted);
+      btn.classList.toggle("is-idle", !started);
+      btn.setAttribute("aria-pressed", muted ? "true" : "false");
+      btn.setAttribute("aria-label", muted ? "Play music" : "Mute music");
+    }
+    function fadeIn() {
+      try { audio.volume = 0; } catch (e) { return; }
+      var t0 = performance.now();
+      (function step(t) {
+        var k = Math.min(1, (t - t0) / 1800);
+        audio.volume = LEVEL * k;
+        if (k < 1 && !audio.paused) requestAnimationFrame(step);
+      })(t0);
+    }
+    function play() {
+      if (muted) return;
+      var p = audio.play();
+      var ok = function () { if (!started) { started = true; fadeIn(); } ui(); stopWaiting(); };
+      if (p && p.then) p.then(ok).catch(function () { /* still waiting for a tap */ }); else ok();
+    }
+    function onFirst(e) { if (!started && !muted && !btn.contains(e.target)) play(); }
+    var events = ["pointerdown", "touchend", "keydown"];
+    function stopWaiting() { events.forEach(function (n) { document.removeEventListener(n, onFirst, true); }); }
+    events.forEach(function (n) { document.addEventListener(n, onFirst, true); });
+    btn.addEventListener("click", function () {
+      muted = !muted;
+      try { localStorage.setItem(KEY, muted ? "1" : "0"); } catch (e) {}
+      if (muted) audio.pause(); else play();
+      ui();
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) audio.pause();
+      else if (started && !muted) audio.play().catch(function () {});
+    });
+    ui();
+    play();   // works where the browser already allows sound; otherwise waits for a tap
+  })();
+
   // ---- Reveal on scroll ---------------------------------------------------
   var reveals = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && !reduceMotion) {
