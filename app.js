@@ -37,12 +37,13 @@
   })();
 
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  // Lite mode for low-power phones or Data Saver: same design, less GPU work.
+  // Lite mode for very low-memory phones or Data Saver: same design, less GPU work.
   var lite = (function () {
     var c = navigator.connection;
     if (c && c.saveData) return true;
-    if (navigator.deviceMemory && navigator.deviceMemory <= 3) return true;
-    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) return true;
+    // Only genuinely low-end devices: core counts are capped or rounded by many
+    // browsers (iPhones included), so they are not used as a signal.
+    if (navigator.deviceMemory && navigator.deviceMemory <= 2) return true;
     return false;
   })();
   if (lite) document.documentElement.classList.add("lite");
