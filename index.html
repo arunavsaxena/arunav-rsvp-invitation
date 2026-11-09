@@ -274,6 +274,16 @@
   /* ---------- Venue (as on save-the-date) ---------- */
   .venue { position: relative; background: var(--ivory); overflow: hidden; overflow: clip; }
   .venue > * { position: relative; }
+  /* Plinth at the foot of the arch: fixed-size lines (not stretched with the arch) so the diyas always sit on it. */
+  .venue > .venue-base { position: absolute; left: 50%; bottom: 34px; width: min(380px, 90%); transform: translateX(-50%);
+    display: flex; align-items: flex-end; justify-content: space-between; padding: 0 32px 15px; pointer-events: none; }
+  .venue-base::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 15px; box-sizing: border-box;
+    border-top: 1.2px solid rgba(184,137,59,.5); border-bottom: 1.2px solid rgba(184,137,59,.5);
+    background: linear-gradient(rgba(184,137,59,.32), rgba(184,137,59,.32)) center / 100% 1px no-repeat; }
+  .venue-base .foot { position: absolute; bottom: 15px; width: 22px; height: 11px; border: 1px solid rgba(184,137,59,.42); border-bottom: 0; }
+  .venue-base .foot.l { left: 0; } .venue-base .foot.r { right: 0; }
+  .venue-base .vdiya { width: 34px; height: 30px; }
+  .venue-base .vorn { width: 110px; height: 18px; color: var(--gold); margin-bottom: 4px; }
   .venue > .venue-arch { position: absolute; left: 50%; top: 34px; bottom: 34px; width: min(380px, 90%); height: calc(100% - 68px); transform: translateX(-50%); color: var(--gold); pointer-events: none; }
   .venue img.logo { width: min(230px, 62vw); height: auto; margin: 26px auto 22px; mix-blend-mode: multiply; }
   .venue h3 { font: 500 clamp(26px, 6.5vw, 34px) var(--serif); margin: 0; color: var(--ink); }
@@ -282,6 +292,7 @@
     font: 600 12px var(--sans); letter-spacing: .2em; text-transform: uppercase; transition: color .2s, border-color .2s; }
   .link-maps:hover { color: var(--gold); border-bottom-color: var(--gold); }
   .venue .note { font: 500 17.5px/1.7 var(--serif); color: var(--muted); margin: 22px auto 0; max-width: 290px; }
+  .venue { padding-bottom: 120px; }
 
   /* ---------- Events ---------- */
   .events { background: var(--buti) 0 0 / 64px 64px, var(--paper); padding: 76px 0 52px; }
@@ -602,6 +613,14 @@
         <path d="M70 18 C76 17.5 80.5 13.5 82 8.5 C76.5 9.5 72 13 70 18 Z" opacity=".75" />
       </g>
     </symbol>
+    <symbol id="diya" viewBox="0 0 46 40">
+      <defs><radialGradient id="diyaFl" cx="50%" cy="70%" r="60%"><stop offset="0" stop-color="#FFF6C9" /><stop offset=".5" stop-color="#FFC24A" /><stop offset="1" stop-color="#E8641C" /></radialGradient></defs>
+      <circle cx="23" cy="13" r="10" fill="#FFC24A" opacity=".2" />
+      <path class="flame" d="M23 3 C 27 9, 28 14, 23 19 C 18 14, 19 9, 23 3 Z" fill="url(#diyaFl)" />
+      <path d="M4 22 C 8 34, 38 34, 42 22 C 36 25, 10 25, 4 22 Z" fill="#B8642A" />
+      <path d="M4 22 C 10 25, 36 25, 42 22" fill="none" stroke="#E8A35A" stroke-width="1.2" />
+      <path d="M17 31 h12 l-2 5 h-8 z" fill="#8E4A1E" />
+    </symbol>
     <symbol id="paisley" viewBox="0 0 46 46">
       <path d="M6 6 C 22 4, 34 12, 32 24 C 30 33, 19 36, 14 29 C 10 23, 15 17, 21 20 C 25 22, 24 27, 20 27" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
       <circle cx="6" cy="6" r="2.4" fill="currentColor" />
@@ -741,10 +760,16 @@
 
   <!-- ============ Venue ============ -->
   <section class="section venue" data-screen-label="Venue" id="venue">
-    <svg class="venue-arch" viewBox="0 0 300 600" preserveAspectRatio="none" aria-hidden="true" data-px="-0.05" data-px-base="translateX(-50%)">
+    <svg class="venue-arch" viewBox="0 0 300 600" preserveAspectRatio="none" aria-hidden="true">
       <path d="M6 598 V150 C6 80 70 50 112 34 C132 26 144 14 150 4 C156 14 168 26 188 34 C230 50 294 80 294 150 V598" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2" vector-effect="non-scaling-stroke" />
       <path d="M16 598 V154 C16 90 76 62 116 46 C134 39 145 28 150 19 C155 28 166 39 184 46 C224 62 284 90 284 154 V598" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="1" vector-effect="non-scaling-stroke" />
     </svg>
+    <div class="venue-base" aria-hidden="true">
+      <span class="foot l"></span><span class="foot r"></span>
+      <svg class="vdiya" viewBox="0 0 46 40"><use href="#diya" /></svg>
+      <svg class="vorn" viewBox="0 0 140 22"><use href="#orn" /></svg>
+      <svg class="vdiya" viewBox="0 0 46 40"><use href="#diya" /></svg>
+    </div>
     <div class="kicker reveal" style="margin-top:28px">The venue</div>
     <svg class="orn reveal" aria-hidden="true"><use href="#orn" /></svg>
     <img class="logo reveal" src="assets/evara-logo.jpeg" alt="Evara Spa and Resort" />
