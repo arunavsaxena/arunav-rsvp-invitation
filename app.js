@@ -12,7 +12,7 @@
   var CONTACTS = [
     { name: "Sunil Kumar Saxena", role: "Groom’s father", phone: "" },
     { name: "Sarita Saxena", role: "Groom’s mother", phone: "" },
-    { name: "Arunav", role: "Groom", phone: "" }
+    { name: "Vedika", role: "RSVP co-ordinator", phone: "" }
   ];
 
   // RSVPs and ID proofs go to the Google Apps Script web app in
@@ -538,6 +538,18 @@
     if (w) { w.classList.remove("has-err"); var n = w.querySelector(".field-err"); if (n) n.remove(); e.target.removeAttribute("aria-invalid"); showError(""); }
   });
 
+  // Ask about a station pickup only when arriving by train.
+  (function () {
+    var q = document.getElementById("pickup-q");
+    function sync() {
+      var train = (form.querySelector('input[name="arriveBy"]:checked') || {}).value === "Train";
+      q.hidden = !train;
+      if (!train) form.querySelectorAll('input[name="pickup"]').forEach(function (r) { r.checked = false; });
+    }
+    form.querySelectorAll('input[name="arriveBy"]').forEach(function (r) { r.addEventListener("change", sync); });
+    sync();
+  })();
+
   function collect() {
     var fd = new FormData(form);
     var going = attending();
@@ -550,14 +562,17 @@
     var checks = [
       ["arriveBy", "Please tell us whether you are arriving by road or train.", form.querySelector('input[name="arriveBy"]')],
       ["arriveTime", "Please add your arrival time.", document.getElementById("rsvp-arrive-time")],
+      ["pickup", "Please tell us whether you need a pickup from the railway station.", form.querySelector('input[name="pickup"]'), function () { return fd.get("arriveBy") === "Train"; }],
       ["departBy", "Please tell us whether you are leaving by road or train.", form.querySelector('input[name="departBy"]')],
       ["departTime", "Please add your departure time.", document.getElementById("rsvp-depart-time")],
       ["driver", "Please tell us whether a driver is travelling with you.", form.querySelector('input[name="driver"]')]
     ];
     for (var c = 0; c < checks.length; c++) {
+      if (checks[c][3] && !checks[c][3]()) continue;
       if (!fd.get(checks[c][0])) return invalid(checks[c][1], checks[c][2]);
     }
     data.arriveBy = fd.get("arriveBy"); data.arriveDate = fd.get("arriveDate"); data.arriveTime = fd.get("arriveTime");
+    data.pickup = data.arriveBy === "Train" ? fd.get("pickup") : "";
     data.departBy = fd.get("departBy"); data.departDate = fd.get("departDate"); data.departTime = fd.get("departTime");
     data.driver = fd.get("driver");
 
@@ -642,6 +657,7 @@
     if (going) {
       li("Guests:", d.guests + (d.guests === "1" ? " person" : " people"));
       li("Arriving:", d.arriveDate + ", " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
+      if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? "Yes, please" : "No, thanks");
       li("Leaving:", d.departDate + ", " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
       li("Driver:", d.driver);
       var up = got.guests.filter(function (g) { return g.file; }).length;

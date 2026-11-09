@@ -465,6 +465,8 @@
   .trip legend { float: left; width: 100%; margin-bottom: 2px; }
   .trip .chip { background: #FFFBF2; }
   .trip .two { grid-template-columns: 1.1fr 1fr; }
+  .pickup-q { display: grid; gap: 8px; }
+  .pickup-q[hidden] { display: none; }
   .trip select.fld { padding-left: 12px; padding-right: 30px; background-position: right 12px center; }
   .sublbl { font: 600 12.5px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
   input[type="time"].fld { min-height: 51px; }
@@ -770,7 +772,7 @@
       <div class="with">with</div>
       <div class="who" style="margin-top:0">Shambhavi</div>
       <div class="of">(D/o Smt. Sonia &amp; Shri Tarun Sharma)</div>
-      <p class="line" style="margin-top:30px">We solicit your presence<br />to celebrate with us<br />and bless the couple</p>
+      <p class="line" style="margin-top:30px">We warmly invite you<br />to celebrate with us<br />and bless the couple</p>
       <svg class="orn hosts-orn" aria-hidden="true"><use href="#orn" /></svg>
       <div class="hosts-sign">Sarita &amp; Sunil Saxena</div>
     </div>
@@ -1208,7 +1210,7 @@
         <div class="kicker">Kindly reply</div>
         <h2 class="rsvp-title">RSVP</h2>
         <svg class="orn" style="margin-top:6px" aria-hidden="true"><use href="#orn" /></svg>
-        <p class="lede" style="font-size:17px;margin-top:14px">One reply per family, please. Every field is needed; your arrival details help us plan your stay and pickup.</p>
+        <p class="lede" style="font-size:17px;margin-top:14px">Just one reply per family, please. Tell us a little about your travel so we can look after your stay and pickups.</p>
         <p class="prev-note" id="rsvp-prev" hidden></p>
       </div>
 
@@ -1247,7 +1249,7 @@
 
         <div id="attending-only" style="display:grid;gap:20px">
           <div class="fld-wrap">
-            <label class="lbl" for="rsvp-guests">How many of you, counting yourself?</label>
+            <label class="lbl" for="rsvp-guests">How many of you will be joining us, yourself included?</label>
             <select class="fld" id="rsvp-guests" name="guests">
               <option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option>
               <option value="5">5 guests</option><option value="6">6 guests</option><option value="7">7 guests</option><option value="8">8 guests</option>
@@ -1271,6 +1273,13 @@
               <div class="fld-wrap">
                 <label class="sublbl" for="rsvp-arrive-time">Time</label>
                 <input class="fld" id="rsvp-arrive-time" name="arriveTime" type="time" step="900" />
+              </div>
+            </div>
+            <div class="pickup-q" id="pickup-q" hidden>
+              <div class="sublbl" id="pickup-lbl">Pickup required at the railway station?</div>
+              <div class="choices" role="radiogroup" aria-labelledby="pickup-lbl">
+              <label class="chip"><input type="radio" name="pickup" value="Yes" /><span class="tick"><svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" fill="none" stroke="#fff" stroke-width="2" /></svg></span><span class="c-main">Yes, please</span></label>
+              <label class="chip"><input type="radio" name="pickup" value="No" /><span class="tick"><svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" fill="none" stroke="#fff" stroke-width="2" /></svg></span><span class="c-main">No, thanks</span></label>
               </div>
             </div>
           </fieldset>
@@ -1311,7 +1320,6 @@
 
         <div id="rsvp-error" hidden role="alert"></div>
         <button type="submit" id="rsvp-submit" class="btn btn-solid">Send RSVP</button>
-        <div class="fine">Please reply at the earliest so we can plan stays and pickups.</div>
       </form>
     </div>
   </section>
@@ -1379,6 +1387,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=5316c9af"></script>
+<script src="app.js?v=3fa9844b"></script>
 </body>
 </html>

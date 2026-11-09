@@ -38,7 +38,7 @@ var HEADERS = [
   'Submitted at', 'Attending', 'Name', 'Phone', 'Guests',
   'Arrival by', 'Arrival date', 'Arrival time',
   'Departure by', 'Departure date', 'Departure time',
-  'Driver', 'Guests & ID proofs', 'ID folder', 'Submission id'
+  'Driver', 'Guests & ID proofs', 'ID folder', 'Submission id', 'Station pickup'
 ];
 
 /** A message that is safe to show the guest. Anything else becomes generic. */
@@ -142,7 +142,7 @@ function saveRsvp_(b) {
   if (!/^[+\d\s()\-]{10,20}$/.test(phone) || digits.length < 10 || digits.length > 15) throw new Reject('Please add a valid phone number.');
 
   var row = { attending: b.attending, name: name, phone: phone, guests: '', arriveBy: '', arriveDate: '', arriveTime: '',
-              departBy: '', departDate: '', departTime: '', driver: '', ids: '', folder: '' };
+              departBy: '', departDate: '', departTime: '', driver: '', ids: '', folder: '', pickup: '' };
 
   if (b.attending === 'Yes') {
     var guests = Number(b.guests);
@@ -150,6 +150,10 @@ function saveRsvp_(b) {
     oneOf_(b.arriveBy, MODES, 'arrival mode');
     oneOf_(b.arriveDate, ARRIVE_DATES, 'arrival date');
     time_(b.arriveTime, 'arrival time');
+    // Station pickup is asked only for train arrivals; pages opened before
+    // the question existed do not send it, so a blank answer is kept blank.
+    var pickup = '';
+    if (b.arriveBy === 'Train' && b.pickup) { oneOf_(b.pickup, ['Yes', 'No'], 'pickup answer'); pickup = b.pickup; }
     oneOf_(b.departBy, MODES, 'departure mode');
     oneOf_(b.departDate, DEPART_DATES, 'departure date');
     time_(b.departTime, 'departure time');
@@ -172,7 +176,7 @@ function saveRsvp_(b) {
 
     row.guests = guests; row.arriveBy = b.arriveBy; row.arriveDate = b.arriveDate; row.arriveTime = b.arriveTime;
     row.departBy = b.departBy; row.departDate = b.departDate; row.departTime = b.departTime;
-    row.driver = b.driver; row.ids = list; row.folder = folder ? folder.getUrl() : '';
+    row.driver = b.driver; row.ids = list; row.folder = folder ? folder.getUrl() : ''; row.pickup = pickup;
   }
 
   bump_('replies', LIMITS.replies10m, LIMITS.repliesDay);
@@ -181,7 +185,7 @@ function saveRsvp_(b) {
     row.attending, row.name, row.phone, row.guests,
     row.arriveBy, row.arriveDate, row.arriveTime,
     row.departBy, row.departDate, row.departTime,
-    row.driver, row.ids, row.folder, b.submissionId
+    row.driver, row.ids, row.folder, b.submissionId, row.pickup
   ].map(cell_);
   // Write everything after the timestamp as plain text, so Sheets does not
   // turn "Wed, 27 Jan" into a date in the wrong year or "11:00" into a time.
@@ -225,6 +229,9 @@ function rsvpSheet_() {
     sheet.appendRow(HEADERS);
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+  } else if (!sheet.getRange(1, HEADERS.length).getValue()) {
+    // Columns added later get their header on the existing tab.
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight('bold');
   }
   return sheet;
 }
