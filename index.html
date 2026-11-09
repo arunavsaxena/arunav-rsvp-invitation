@@ -197,21 +197,23 @@
   .day .mg { width: 13px; height: 13px; flex-shrink: 0; }
   .day span { font: 600 10px var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
 
-  .event { margin: 0 16px 22px; border-radius: 20px; overflow: hidden; background: #FFFBF2; box-shadow: 0 14px 36px rgba(46,31,26,.1); }
-  .ev-head { padding: 30px 24px 6px; text-align: center; }
-  .ev-name { font: 400 clamp(44px, 13vw, 54px)/1.05 var(--script); margin: 0; font-weight: 400; }
-  .ev-blurb { font: italic 400 17px/1.5 var(--serif); margin: 10px auto 0; max-width: 300px; min-height: 3em; text-wrap: balance; }
-  .ev-art { display: block; width: 100%; height: 170px; }
-  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; padding: 20px 22px 22px; text-align: left; }
+  /* Events sit directly on the page: a large art panel, then the details. */
+  .event { display: flex; flex-direction: column; margin: 0 0 56px; }
+  .ev-art { order: -1; display: block; width: calc(100% - 28px); height: 210px; margin: 0 14px; border-radius: 22px;
+    box-shadow: 0 16px 34px rgba(46,31,26,.14); }
+  .ev-head { padding: 26px 26px 0; text-align: center; }
+  .ev-name { font: 400 clamp(46px, 13vw, 58px)/1.05 var(--script); margin: 0; font-weight: 400; }
+  .ev-blurb { font: italic 400 18px/1.5 var(--serif); margin: 8px auto 0; max-width: 320px; color: var(--muted); text-wrap: balance; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; padding: 22px 26px 0; text-align: left; max-width: 440px; width: 100%; margin: 0 auto; }
   .fact .lbl { font: 600 9px var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--faint); }
   .fact .val { margin-top: 5px; font: 500 19px/1.25 var(--serif); color: var(--ink); }
   .fact .sub { margin-top: 3px; font: 500 10px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   .fact.full { grid-column: 1 / -1; }
 
-  .ev-carnival .ev-head { background: #FFF3E0; color: #6A1C47; }
-  .ev-starry .ev-head { background: #0B1433; color: #FFF4DA; }
-  .ev-shaadi .ev-head { background: #FFF4DC; color: #5A1A12; }
-  .ev-regal .ev-head { background: #5C0D19; color: #FFEFD6; }
+  .ev-carnival .ev-name { color: #8A2457; }
+  .ev-starry .ev-name { color: #1F2A5C; }
+  .ev-shaadi .ev-name { color: #9A3A22; }
+  .ev-regal .ev-name { color: var(--maroon); }
 
   .wheel { transform-box: fill-box; transform-origin: center; animation: wheel 40s linear infinite; }
   @keyframes wheel { to { transform: rotate(360deg); } }
@@ -341,9 +343,14 @@
     .letter-body { font-size: 18px; }
     .events { padding: 104px 48px 80px; }
     .day { max-width: 1040px; margin: 56px auto 24px; }
-    .day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 1040px; margin: 0 auto; }
-    .event { margin: 0; }
-    .ev-art { height: 200px; }
+    .day-grid { display: grid; gap: 72px; max-width: 1040px; margin: 0 auto; }
+    .event { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-areas: "art head" "art facts";
+      column-gap: 56px; align-items: center; margin: 0; }
+    .day-grid .event:nth-child(even) { grid-template-columns: 1fr 1.15fr; grid-template-areas: "head art" "facts art"; }
+    .ev-art { grid-area: art; width: 100%; height: 340px; margin: 0; }
+    .ev-head { grid-area: head; align-self: end; padding: 0; text-align: left; }
+    .ev-blurb { margin-left: 0; max-width: 380px; }
+    .facts { grid-area: facts; align-self: start; padding: 26px 0 0; margin: 0; max-width: 420px; }
     .cd { max-width: 520px; gap: 14px; }
     .rsvp { padding: 104px 48px; }
     .rsvp-card { max-width: 620px; margin: 0 auto; padding: 48px 44px 36px; }
