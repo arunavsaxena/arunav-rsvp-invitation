@@ -309,7 +309,7 @@
     var loc = "Evara Resort & Spa\\, Village Bhalon\\, Patkote\\, Ramnagar\\, Jim Corbett\\, Uttarakhand 263159";
     var events = [
       ["carnival", "Carnival Lunch · Arunav & Shambhavi", "20270127T073000Z", "20270127T103000Z", "Lunch\\, hi-tea by the pool\\, mehendi and carnival games. Restaurant & Pool Lawn."],
-      ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Lagan\\, tilak and the ring ceremony\\, followed by a cocktail sangeet. Banquet Hall & Small Lawn."],
+      ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Tilak\\, lagan\\, godh bharai and the ring ceremony\\, followed by a cocktail sangeet. Banquet Hall & Small Lawn."],
       ["shaadi", "Shaadi · Arunav & Shambhavi", "20270128T043000Z", "20270128T120000Z", "Baraat\\, varmala and phere. Big Lawn & Poolside."],
       ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Our first dance\\, performances by friends and dinner. Big Lawn & Banquet Hall."]
     ];
