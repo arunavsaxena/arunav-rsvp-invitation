@@ -68,44 +68,68 @@
   /* ---------- Envelope intro ---------- */
   #intro { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 24px;
     transition: opacity .9s ease .6s, visibility 0s linear 1.5s; }
-  #intro .sky { position: absolute; }
+  #intro { background: #F2D3B0; }
+  /* Landing: a watercolour of the resort at golden hour behind, the garden with brass lanterns in front.
+     The layers drift slightly apart as the pointer moves (--mx, --my set by app.js). */
+  /* Every layer bleeds past the screen so drift and pointer movement never show an edge. */
+  .scene { position: absolute; inset: -28px; overflow: hidden; pointer-events: none;
+    transform: translate3d(calc(var(--mx, 0) * -10px), calc(var(--my, 0) * -6px), 0) scale(var(--sz, 1));
+    transition: transform 1.4s cubic-bezier(.6,0,.2,1); }
+  .scene img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 42% 62%; animation: drift 16s ease-out both; }
+  @keyframes drift { from { transform: scale(1.1); } to { transform: scale(1.02); } }
+  .garden { position: absolute; left: 50%; bottom: -16px; z-index: 3; width: calc(100% + 56px); pointer-events: none;
+    transform: translate3d(calc(-50% + var(--mx, 0) * 14px), calc(var(--gy, 0%) + var(--my, 0) * 6px), 0);
+    transition: transform 1.1s cubic-bezier(.6,0,.2,1), opacity .8s ease; }
+  .garden img { display: block; width: 100%; height: auto; }
+  #intro .sky { position: absolute; z-index: 1; background: none; }
+  /* Tall, narrow screens: the garden's two halves become larger corner pieces, fading into each other in the middle. */
+  @media (max-aspect-ratio: 4/5) {
+    .garden { height: min(58vh, 520px); }
+    #intro { place-items: start center; padding-top: max(52px, 6svh); }
+    .stage { min-height: min(540px, 68svh); padding-top: clamp(96px, 15svh, 130px); padding-bottom: clamp(44px, 7svh, 64px); }
+    .garden img { display: none; }
+    .garden::before, .garden::after { content: ""; position: absolute; bottom: 0; width: 58%; height: 100%;
+      background: url("assets/landing/garden-1600.webp") no-repeat; background-size: auto 100%; }
+    .garden::before { left: 0; background-position: left bottom;
+      -webkit-mask: linear-gradient(90deg, #000 78%, transparent); mask: linear-gradient(90deg, #000 78%, transparent); }
+    .garden::after { right: 0; background-position: right bottom;
+      -webkit-mask: linear-gradient(270deg, #000 78%, transparent); mask: linear-gradient(270deg, #000 78%, transparent); }
+  }
+  #intro.is-open { --sz: 1.08; --gy: 45%; }
+  #intro.is-open .garden { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .scene img { animation: none; } }
   #intro.is-open { opacity: 0; visibility: hidden; pointer-events: none; }
   /* Landing: the invitation stands in a frosted, cusped arch over the lantern sky. */
   .stage { --arch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 600' preserveAspectRatio='none'%3E%3Cpath d='M6 598V150C6 80 70 50 112 34C132 26 144 14 150 4C156 14 168 26 188 34C230 50 294 80 294 150V598Z'/%3E%3C/svg%3E");
-    position: relative; z-index: 2; width: min(560px, 90vw); min-height: min(600px, 80svh); cursor: pointer;
+    position: relative; z-index: 2; width: min(440px, 80vw); min-height: min(600px, 80svh); cursor: pointer;
     display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-    gap: clamp(14px, 2.4vh, 24px); padding: clamp(110px, 19svh, 150px) clamp(26px, 7vw, 56px) clamp(64px, 10svh, 86px);
+    gap: clamp(14px, 2.4vh, 24px); padding: clamp(110px, 19svh, 150px) clamp(20px, 6vw, 44px) clamp(64px, 10svh, 86px);
     transition: transform .9s cubic-bezier(.7,0,.2,1), opacity .7s ease; }
   #intro.is-open .stage { transform: translateY(-26px) scale(.985); opacity: 0; }
   .stage-glass { position: absolute; inset: 0; z-index: -1; pointer-events: none;
     -webkit-mask: var(--arch) center / 100% 100% no-repeat; mask: var(--arch) center / 100% 100% no-repeat;
-    background: linear-gradient(170deg, rgba(255,246,232,.2) 0%, rgba(255,236,214,.09) 40%, rgba(60,18,30,.16) 100%);
-    -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); }
+    background: linear-gradient(170deg, rgba(255,252,246,.52) 0%, rgba(255,248,238,.36) 45%, rgba(255,242,226,.48) 100%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); }
   .stage-glass::before { content: ""; position: absolute; inset: 0;
-    background: radial-gradient(90% 40% at 30% 8%, rgba(255,255,255,.22), rgba(255,255,255,0) 60%); }
+    background: radial-gradient(90% 40% at 30% 8%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%); }
   .stage-rim { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: visible;
-    filter: drop-shadow(0 30px 60px rgba(14,4,12,.45)); }
-  .stage-base { position: absolute; left: 0; right: 0; bottom: -2px; display: flex; justify-content: space-between; align-items: flex-end;
-    padding: 0 clamp(14px, 4vw, 26px); pointer-events: none; }
-  .stage-base svg { width: 34px; height: 30px; }
+    filter: drop-shadow(0 26px 50px rgba(90,40,20,.28)); }
   .stage .eyebrow { margin: 0 auto; max-width: 27ch; text-wrap: balance;
-    font: italic 500 clamp(18px, 4.6vw, 23px)/1.55 var(--serif); color: #F4E2BC; }
-  .stage .orn { width: 120px; height: 19px; color: var(--gold-pale); }
+    font: italic 500 clamp(18px, 4.6vw, 23px)/1.55 var(--serif); color: #5A2A1E; }
+  .stage .orn { width: 120px; height: 19px; color: var(--gold); }
   .stage .st-names { display: flex; flex-direction: column; align-items: center;
-    font: 400 clamp(50px, 14vw, 76px)/1.08 var(--script); color: #FFF6E6; -webkit-text-stroke: .6px currentColor;
-    text-shadow: 0 4px 24px rgba(20,6,14,.55); }
-  .stage .st-names em { font: italic 500 .5em/1.2 var(--serif); color: var(--gold-pale); -webkit-text-stroke: 0; }
-  .stage .st-date { font: 600 clamp(13px, 3.6vw, 16px) var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--gold-pale); }
+    font: 400 clamp(44px, 12.5vw, 68px)/1.08 var(--script); color: var(--maroon); -webkit-text-stroke: .6px currentColor;
+    text-shadow: 0 2px 18px rgba(255,248,236,.8); }
+  .stage .st-names em { font: italic 500 .5em/1.2 var(--serif); color: var(--gold); -webkit-text-stroke: 0; }
+  .stage .st-date { font: 600 clamp(13px, 3.6vw, 16px) var(--sans); letter-spacing: .22em; text-transform: uppercase; color: #8A5A22; }
   .stage .tap { margin-top: clamp(4px, 1.4vh, 14px); padding: 14px 30px; border-radius: 999px; cursor: pointer;
     font: 600 12.5px var(--sans); letter-spacing: .22em; text-transform: uppercase; color: #FFF4E0;
-    border: 1px solid rgba(232,198,119,.7);
-    background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.06));
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-    box-shadow: 0 10px 26px rgba(14,4,12,.3), inset 0 1px 0 rgba(255,255,255,.35); transition: background .25s, color .25s, transform .2s; }
-  .stage .tap:hover { background: var(--gold-pale); color: #3A1018; }
-  .stage .tap:focus-visible { outline: 2px solid var(--gold-pale); outline-offset: 4px; }
+    border: 1px solid rgba(232,198,119,.85); background: linear-gradient(180deg, #8E2A35, #6A1822);
+    box-shadow: 0 10px 24px rgba(74,15,26,.3), inset 0 1px 0 rgba(255,255,255,.28); transition: filter .25s, transform .2s; }
+  .stage .tap:hover { filter: brightness(1.1); }
+  .stage .tap:focus-visible { outline: 2px solid var(--maroon); outline-offset: 4px; }
   .lite .stage-glass, .lite .stage .tap { -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .lite .stage-glass { background: rgba(40,14,26,.55); }
+  .lite .stage-glass { background: rgba(255,250,242,.88); }
   @media (max-height: 640px) { .stage { min-height: 0; padding-top: 96px; gap: 10px; } }
 
   /* ---------- Page column ---------- */
@@ -724,20 +748,21 @@
 
 <!-- ============ Landing (opens into the invitation) ============ -->
 <div id="intro" role="dialog" aria-modal="true" aria-label="Wedding invitation for Arunav and Shambhavi">
+  <div class="scene" aria-hidden="true"><img src="assets/landing/scene-900.webp" srcset="assets/landing/scene-900.webp 900w, assets/landing/scene-1600.webp 1600w" sizes="100vw" alt="" decoding="async" fetchpriority="high" /></div>
   <div class="sky" id="sky-intro" aria-hidden="true"></div>
   <div class="stage" id="stage">
     <div class="stage-glass" aria-hidden="true"></div>
     <svg class="stage-rim" viewBox="0 0 300 600" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M6 598V150C6 80 70 50 112 34C132 26 144 14 150 4C156 14 168 26 188 34C230 50 294 80 294 150V598Z" fill="none" stroke="#E8C677" stroke-opacity=".7" stroke-width="1.2" vector-effect="non-scaling-stroke" />
-      <path d="M16 598V154C16 90 76 62 116 46C134 39 145 28 150 19C155 28 166 39 184 46C224 62 284 90 284 154V598" fill="none" stroke="#E8C677" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke" />
+      <path d="M6 598V150C6 80 70 50 112 34C132 26 144 14 150 4C156 14 168 26 188 34C230 50 294 80 294 150V598Z" fill="none" stroke="#B8893B" stroke-opacity=".85" stroke-width="1.2" vector-effect="non-scaling-stroke" />
+      <path d="M16 598V154C16 90 76 62 116 46C134 39 145 28 150 19C155 28 166 39 184 46C224 62 284 90 284 154V598" fill="none" stroke="#B8893B" stroke-opacity=".4" stroke-width="1" vector-effect="non-scaling-stroke" />
     </svg>
-    <div class="stage-base" aria-hidden="true"><svg viewBox="0 0 46 40"><use href="#diya" /></svg><svg viewBox="0 0 46 40"><use href="#diya" /></svg></div>
     <div class="eyebrow">Seeking your auspicious presence for the shubh vivah of</div>
     <svg class="orn" viewBox="0 0 140 22" aria-hidden="true"><use href="#orn" /></svg>
     <div class="st-names"><span>Arunav</span><em>&amp;</em><span>Shambhavi</span></div>
     <div class="st-date">27th &amp; 28th January 2027</div>
     <button type="button" class="tap" id="open-invite">Tap to open</button>
   </div>
+  <div class="garden" aria-hidden="true"><img src="assets/landing/garden-900.webp" srcset="assets/landing/garden-900.webp 900w, assets/landing/garden-1600.webp 1600w" sizes="100vw" alt="" decoding="async" /></div>
 </div>
 
 <main class="page">
@@ -1159,6 +1184,6 @@
   <svg class="ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6"/><path class="wave" d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
   <svg class="ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path d="M16 9.5l5 5m0-5l-5 5"/></svg>
 </button>
-<script src="app.js?v=6473f8fc"></script>
+<script src="app.js?v=11e3c2ec"></script>
 </body>
 </html>
