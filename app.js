@@ -539,14 +539,17 @@
   });
 
   // Ask about a station pickup (arrival) or drop (departure) only for train travel.
+  // A "Yes" also asks for the station and the train.
   [["arriveBy", "pickup-q", "pickup"], ["departBy", "drop-q", "drop"]].forEach(function (c) {
     var q = document.getElementById(c[1]);
+    var details = document.getElementById(c[2] + "-details");
     function sync() {
       var train = (form.querySelector('input[name="' + c[0] + '"]:checked') || {}).value === "Train";
       q.hidden = !train;
       if (!train) form.querySelectorAll('input[name="' + c[2] + '"]').forEach(function (r) { r.checked = false; });
+      details.hidden = !(train && (form.querySelector('input[name="' + c[2] + '"]:checked') || {}).value === "Yes");
     }
-    form.querySelectorAll('input[name="' + c[0] + '"]').forEach(function (r) { r.addEventListener("change", sync); });
+    form.querySelectorAll('input[name="' + c[0] + '"], input[name="' + c[2] + '"]').forEach(function (r) { r.addEventListener("change", sync); });
     sync();
   });
 
@@ -566,15 +569,23 @@
       ["departBy", "Please tell us whether you are leaving by road or train.", form.querySelector('input[name="departBy"]')],
       ["departTime", "Please add your departure time.", document.getElementById("rsvp-depart-time")],
       ["drop", "Please tell us whether you need a drop at the railway station.", form.querySelector('input[name="drop"]'), function () { return fd.get("departBy") === "Train"; }],
+      ["pickupStation", "Please tell us which station to pick you up from.", document.getElementById("rsvp-pickup-station"), function () { return fd.get("arriveBy") === "Train" && fd.get("pickup") === "Yes"; }],
+      ["pickupTrain", "Please add the train you are arriving on.", document.getElementById("rsvp-pickup-train"), function () { return fd.get("arriveBy") === "Train" && fd.get("pickup") === "Yes"; }],
+      ["dropStation", "Please tell us which station to drop you at.", document.getElementById("rsvp-drop-station"), function () { return fd.get("departBy") === "Train" && fd.get("drop") === "Yes"; }],
+      ["dropTrain", "Please add the train you are leaving on.", document.getElementById("rsvp-drop-train"), function () { return fd.get("departBy") === "Train" && fd.get("drop") === "Yes"; }],
       ["driver", "Please tell us whether a driver is travelling with you.", form.querySelector('input[name="driver"]')]
     ];
     for (var c = 0; c < checks.length; c++) {
       if (checks[c][3] && !checks[c][3]()) continue;
-      if (!fd.get(checks[c][0])) return invalid(checks[c][1], checks[c][2]);
+      if (!String(fd.get(checks[c][0]) || "").trim()) return invalid(checks[c][1], checks[c][2]);
     }
     data.arriveBy = fd.get("arriveBy"); data.arriveDate = fd.get("arriveDate"); data.arriveTime = fd.get("arriveTime");
     data.pickup = data.arriveBy === "Train" ? fd.get("pickup") : "";
     data.drop = fd.get("departBy") === "Train" ? fd.get("drop") : "";
+    data.pickupStation = data.pickup === "Yes" ? fd.get("pickupStation").trim() : "";
+    data.pickupTrain = data.pickup === "Yes" ? fd.get("pickupTrain").trim() : "";
+    data.dropStation = data.drop === "Yes" ? fd.get("dropStation").trim() : "";
+    data.dropTrain = data.drop === "Yes" ? fd.get("dropTrain").trim() : "";
     data.departBy = fd.get("departBy"); data.departDate = fd.get("departDate"); data.departTime = fd.get("departTime");
     data.driver = fd.get("driver");
 
@@ -659,9 +670,9 @@
     if (going) {
       li("Guests:", d.guests + (d.guests === "1" ? " person" : " people"));
       li("Arriving:", d.arriveDate + ", " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
-      if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? "Yes, please" : "No, thanks");
+      if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? d.pickupStation + ", " + d.pickupTrain : "No, thanks");
       li("Leaving:", d.departDate + ", " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
-      if (d.drop) li("Station drop:", d.drop === "Yes" ? "Yes, please" : "No, thanks");
+      if (d.drop) li("Station drop:", d.drop === "Yes" ? d.dropStation + ", " + d.dropTrain : "No, thanks");
       li("Driver:", d.driver);
       var up = got.guests.filter(function (g) { return g.file; }).length;
       li("ID proofs:", up === got.guests.length ? "all " + up + " uploaded" : up + " of " + got.guests.length + " uploaded");

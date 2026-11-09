@@ -206,12 +206,12 @@ function saveRsvp_(b) {
     // Station pickup is asked only for train arrivals; pages opened before
     // the question existed do not send it, so a blank answer is kept blank.
     var pickup = '';
-    if (b.arriveBy === 'Train' && b.pickup) { oneOf_(b.pickup, ['Yes', 'No'], 'pickup answer'); pickup = b.pickup; }
+    if (b.arriveBy === 'Train' && b.pickup) { oneOf_(b.pickup, ['Yes', 'No'], 'pickup answer'); pickup = stationTrip_(b.pickup, b.pickupStation, b.pickupTrain); }
     oneOf_(b.departBy, MODES, 'departure mode');
     oneOf_(b.departDate, DEPART_DATES, 'departure date');
     time_(b.departTime, 'departure time');
     var drop = '';
-    if (b.departBy === 'Train' && b.drop) { oneOf_(b.drop, ['Yes', 'No'], 'drop answer'); drop = b.drop; }
+    if (b.departBy === 'Train' && b.drop) { oneOf_(b.drop, ['Yes', 'No'], 'drop answer'); drop = stationTrip_(b.drop, b.dropStation, b.dropTrain); }
     oneOf_(b.driver, ['Yes', 'No'], 'driver answer');
     if (!Array.isArray(b.ids) || b.ids.length !== guests) throw new Reject('Please add the name of every guest.');
     // ID proofs are optional. A guest marked file:false sent none; older pages
@@ -432,6 +432,14 @@ function looksLike_(bytes, mime) {
 
 function checkId_(id) {
   if (typeof id !== 'string' || !/^[a-z0-9-]{12,40}$/i.test(id)) throw new Reject('Bad request.');
+}
+
+/** "Yes - Kathgodam, train 15013" for a pickup or drop; older pages send no station or train. */
+function stationTrip_(answer, station, train) {
+  if (answer !== 'Yes') return answer;
+  var s = clean_(station, 60), t = clean_(train, 60);
+  var bits = [s, t ? 'train ' + t : ''].filter(function (x) { return x; });
+  return bits.length ? 'Yes - ' + bits.join(', ') : 'Yes';
 }
 
 function oneOf_(v, list, what) {
