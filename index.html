@@ -165,7 +165,7 @@
   #events, #rsvp, #venue, #letter, #invite { scroll-margin-top: 8px; }
   .footer-pad { height: 64px; }
   .ev-art .px { transform-box: view-box; transform-origin: 50% 50%; transform: scale(1.07); will-change: transform; }
-  .rangoli { will-change: transform; }
+  .rangoli, .cd-mandala, [data-px] { will-change: transform; }
   @media (min-width: 760px) {
     .section-nav { bottom: 22px; padding: 6px; }
     .section-nav .lens { top: 6px; height: calc(100% - 12px); }
@@ -274,15 +274,20 @@
 
   /* Events sit directly on the page: a large art panel, then the details. */
   .event { display: flex; flex-direction: column; margin: 0 0 52px; }
-  .ev-text { position: relative; z-index: 1; margin: -22px 18px 0; padding: 24px 0 22px; border-radius: 20px;
-    background: linear-gradient(160deg, rgba(255,252,246,.86), rgba(255,250,240,.74));
-    -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%);
-    border: 1px solid rgba(255,255,255,.75);
-    box-shadow: 0 16px 36px rgba(46,31,26,.12), inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 0 1px rgba(184,137,59,.14); }
+  .ev-text { position: relative; z-index: 1; margin: -44px 18px 0; padding: 24px 0 22px; border-radius: 20px;
+    background: linear-gradient(155deg, rgba(255,253,249,.72) 0%, rgba(255,250,242,.52) 45%, rgba(255,246,234,.62) 100%);
+    -webkit-backdrop-filter: blur(22px) saturate(190%); backdrop-filter: blur(22px) saturate(190%);
+    border: 1px solid transparent;
+    box-shadow: 0 18px 40px rgba(46,31,26,.14), 0 2px 8px rgba(46,31,26,.06), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(255,255,255,.4); }
+  /* glass rim: a white-to-gold gradient hairline around the sheet */
+  .ev-text::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+    background: linear-gradient(140deg, rgba(255,255,255,.95), rgba(232,198,119,.55) 40%, rgba(255,255,255,.35) 70%, rgba(232,198,119,.6));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
   .ev-text::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-    background: radial-gradient(90% 50% at 15% 0%, rgba(255,255,255,.6), rgba(255,255,255,0) 60%); }
+    background: radial-gradient(110% 55% at 12% -5%, rgba(255,255,255,.75), rgba(255,255,255,0) 58%),
+      linear-gradient(180deg, rgba(255,255,255,0) 70%, rgba(255,255,255,.25)); }
   .ev-text > * { position: relative; }
-  .ev-art { display: block; width: calc(100% - 28px); height: 236px; margin: 0 14px; border-radius: 22px;
+  .ev-art { display: block; width: calc(100% - 28px); height: 250px; margin: 0 14px; border-radius: 22px;
     box-shadow: 0 16px 34px rgba(46,31,26,.14); }
   .ev-head { padding: 0 16px; text-align: center; }
   .ev-name { font: 400 clamp(38px, 11vw, 58px)/1.05 var(--script); margin: 0; font-weight: 400; white-space: nowrap; }
@@ -452,8 +457,8 @@
     .event { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-areas: "art text"; align-items: center; margin: 0; }
     .day-grid .event:nth-child(even) { grid-template-columns: 1fr 1.25fr; grid-template-areas: "text art"; }
     .ev-art { grid-area: art; width: 100%; height: 330px; margin: 0; }
-    .ev-text { grid-area: text; margin: 0 0 0 -36px; padding: 38px 40px 34px; }
-    .day-grid .event:nth-child(even) .ev-text { margin: 0 -36px 0 0; }
+    .ev-text { grid-area: text; margin: 0 0 0 -64px; padding: 38px 40px 34px; }
+    .day-grid .event:nth-child(even) .ev-text { margin: 0 -64px 0 0; }
     .ev-head { padding: 0; text-align: left; }
     .ev-blurb { margin-left: 0; max-width: 380px; }
     .facts { padding: 20px 0 0; }
@@ -654,7 +659,7 @@
     <svg class="rangoli tl" aria-hidden="true"><use href="#mandala" /></svg>
     <svg class="rangoli br" aria-hidden="true"><use href="#mandala" /></svg>
     <div class="reveal">
-      <svg class="ganesh" role="img" aria-label="Lord Ganesh"><use href="#ganesh" /></svg>
+      <svg class="ganesh" role="img" aria-label="Lord Ganesh" data-px="0.06"><use href="#ganesh" /></svg>
       <p class="line">On the occasion of the<br />wedding ceremony of our son</p>
       <div class="who">Arunav</div>
       <div class="with">with</div>
@@ -711,7 +716,7 @@
 
   <!-- ============ Venue ============ -->
   <section class="section venue" data-screen-label="Venue" id="venue">
-    <svg class="venue-arch" viewBox="0 0 300 600" preserveAspectRatio="none" aria-hidden="true">
+    <svg class="venue-arch" viewBox="0 0 300 600" preserveAspectRatio="none" aria-hidden="true" data-px="-0.05" data-px-base="translateX(-50%)">
       <path d="M6 598 V150 C6 80 70 50 112 34 C132 26 144 14 150 4 C156 14 168 26 188 34 C230 50 294 80 294 150 V598" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.2" vector-effect="non-scaling-stroke" />
       <path d="M16 598 V154 C16 90 76 62 116 46 C134 39 145 28 150 19 C155 28 166 39 184 46 C224 62 284 90 284 154 V598" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="1" vector-effect="non-scaling-stroke" />
     </svg>
@@ -796,7 +801,7 @@
         <path d="M14 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M52 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M90 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M128 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M166 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M204 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M242 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M280 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M318 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M356 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" /><path d="M394 344 l3 -7 l2 7 l3 -5 l2 5" fill="none" stroke="#7FA05A" stroke-width="1.4" />
         </g>
       </svg>
-      <div class="ev-text">
+      <div class="ev-text" data-px="0.035">
         <div class="ev-head">
           <h3 class="ev-name">Carnival Lunch</h3>
           <p class="ev-blurb">Lunch, hi-tea by the pool, mehendi and carnival games.</p>
@@ -882,7 +887,7 @@
         <g fill="#FFD98A" opacity=".8"><circle class="tw" cx="30" cy="330" r="1.4" /><circle class="tw" cx="52" cy="322" r="1.4" style="animation-delay:-1s" /><circle class="tw" cx="352" cy="324" r="1.4" style="animation-delay:-2s" /><circle class="tw" cx="374" cy="330" r="1.4" /></g>
         </g>
       </svg>
-      <div class="ev-text">
+      <div class="ev-text" data-px="0.035">
         <div class="ev-head">
           <h3 class="ev-name">Engagement</h3>
           <p class="ev-blurb">Lagan, tilak and the ring ceremony, followed by a cocktail sangeet.</p>
@@ -973,7 +978,7 @@
         <ellipse cx="200" cy="350" rx="30" ry="4" fill="none" stroke="#FFF8EA" stroke-width="1" opacity=".8" />
         </g>
       </svg>
-      <div class="ev-text">
+      <div class="ev-text" data-px="0.035">
         <div class="ev-head">
           <h3 class="ev-name">Shaadi</h3>
           <p class="ev-blurb">Baraat, varmala and phere. Seven steps, seven promises.</p>
@@ -1053,7 +1058,7 @@
         <rect y="352" width="400" height="8" fill="#2A040B" opacity=".6" />
         </g>
       </svg>
-      <div class="ev-text">
+      <div class="ev-text" data-px="0.035">
         <div class="ev-head">
           <h3 class="ev-name">Reception</h3>
           <p class="ev-blurb">Our first dance as husband and wife, performances by friends and dinner.</p>
@@ -1229,6 +1234,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=69e5b1ff"></script>
+<script src="app.js?v=3353543f"></script>
 </body>
 </html>

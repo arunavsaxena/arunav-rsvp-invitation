@@ -209,6 +209,13 @@
     var heroImg = document.getElementById("hero-img");
     var arts = Array.prototype.slice.call(document.querySelectorAll(".ev-art .px"));
     var rangolis = Array.prototype.slice.call(document.querySelectorAll(".rangoli"));
+    var cdMandala = document.querySelector(".cd-mandala");
+    var marigolds = Array.prototype.slice.call(document.querySelectorAll(".day .mg"));
+    var floaters = Array.prototype.slice.call(document.querySelectorAll("[data-px]")).map(function (el) {
+      return { el: el, speed: parseFloat(el.getAttribute("data-px")) || 0, base: el.getAttribute("data-px-base") || "" };
+    });
+    // Block-print textures drift slower than the content for a sense of depth.
+    var textured = Array.prototype.slice.call(document.querySelectorAll(".hero, .letter-sec, .events, .rsvp"));
     function parallax() {
       if (reduceMotion) return;
       var y = window.scrollY, vh = window.innerHeight;
@@ -220,6 +227,22 @@
         g.style.transform = "translateY(" + (p * -9).toFixed(2) + "px) scale(1.07)";
       });
       rangolis.forEach(function (el) { el.style.transform = "rotate(" + (y * 0.02).toFixed(2) + "deg)"; });
+      if (cdMandala) {
+        var cr = cdMandala.getBoundingClientRect();
+        if (cr.bottom > 0 && cr.top < vh) cdMandala.style.transform = "translate(-50%, -50%) rotate(" + (y * 0.015).toFixed(2) + "deg)";
+      }
+      marigolds.forEach(function (el) { el.style.transform = "rotate(" + (y * 0.12).toFixed(1) + "deg)"; });
+      floaters.forEach(function (f) {
+        var r = f.el.getBoundingClientRect();
+        if (r.bottom < -100 || r.top > vh + 100) return;
+        var d = (r.top + r.height / 2 - vh / 2);
+        f.el.style.transform = (f.base ? f.base + " " : "") + "translateY(" + (d * f.speed).toFixed(1) + "px)";
+      });
+      textured.forEach(function (sec) {
+        var r = sec.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        sec.style.backgroundPosition = "0 " + (r.top * -0.12).toFixed(1) + "px, 0 0";
+      });
     }
 
     var queued = false;
