@@ -192,17 +192,19 @@
       var t0 = null, id = ++gliding;
       var root = document.documentElement, prev = root.style.scrollBehavior;
       root.style.scrollBehavior = "auto";
+      root.style.scrollSnapType = "none";   // don't let gentle snap hijack the glide
       function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
       function step(ts) {
         if (id !== gliding) return;
         if (t0 === null) t0 = ts;
         var k = Math.min(1, (ts - t0) / dur);
         window.scrollTo(0, start + dist * ease(k));
-        if (k < 1) requestAnimationFrame(step); else root.style.scrollBehavior = prev;
+        if (k < 1) requestAnimationFrame(step);
+        else root.style.scrollBehavior = prev;   // snap comes back on the next touch or wheel (stopGlide)
       }
       requestAnimationFrame(step);
     }
-    function stopGlide() { gliding++; document.documentElement.style.scrollBehavior = ""; }
+    function stopGlide() { gliding++; document.documentElement.style.scrollBehavior = ""; document.documentElement.style.scrollSnapType = ""; }
     window.addEventListener("wheel", stopGlide, { passive: true });
     window.addEventListener("touchstart", stopGlide, { passive: true });
     links.forEach(function (a, i) {

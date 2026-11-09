@@ -204,6 +204,17 @@
   .names, .families .who, .families .hosts-sign, .day span em, .ev-name, .rsvp-title, .ty, footer .closing {
     -webkit-text-stroke: .6px currentColor; paint-order: stroke fill; }
 
+  /* ---------- Gentle snap (phones only) ----------
+     "proximity" only settles when scrolling stops near one of these, so reading
+     stays free everywhere else. The first event of each day keeps its day
+     heading in view; the letter, countdown and form never snap. */
+  @media (max-width: 759px) and (prefers-reduced-motion: no-preference) {
+    html { scroll-snap-type: y proximity; }
+    .hero, .families, .venue, .event { scroll-snap-align: start; }
+    .event { scroll-margin-top: 16px; }
+    .day-grid .event:first-child { scroll-margin-top: 120px; }
+  }
+
   /* ---------- Performance ---------- */
   /* Animations pause while their section is off-screen. */
   .paused, .paused * { animation-play-state: paused !important; }
@@ -1259,6 +1270,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=c2f7ef0b"></script>
+<script src="app.js?v=ec90ce04"></script>
 </body>
 </html>
