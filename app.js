@@ -118,6 +118,39 @@
     var footer = document.querySelector("footer");
     var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
 
+    // Eased glide to a section. CSS smooth-scroll is near-instant over long
+    // distances, so this animates it explicitly (a jump for reduced motion).
+    var gliding = 0;
+    function glideTo(el) {
+      var start = window.scrollY;
+      var end = Math.max(0, el.getBoundingClientRect().top + start - 8);
+      var dist = end - start;
+      if (reduceMotion || Math.abs(dist) < 4) { window.scrollTo(0, end); return; }
+      var dur = Math.min(1400, 600 + Math.abs(dist) * 0.12);
+      var t0 = null, id = ++gliding;
+      var root = document.documentElement, prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+      function step(ts) {
+        if (id !== gliding) return;
+        if (t0 === null) t0 = ts;
+        var k = Math.min(1, (ts - t0) / dur);
+        window.scrollTo(0, start + dist * ease(k));
+        if (k < 1) requestAnimationFrame(step); else root.style.scrollBehavior = prev;
+      }
+      requestAnimationFrame(step);
+    }
+    function stopGlide() { gliding++; document.documentElement.style.scrollBehavior = ""; }
+    window.addEventListener("wheel", stopGlide, { passive: true });
+    window.addEventListener("touchstart", stopGlide, { passive: true });
+    links.forEach(function (a, i) {
+      a.addEventListener("click", function (e) {
+        if (!targets[i]) return;
+        e.preventDefault();
+        glideTo(targets[i]);
+      });
+    });
+
     function update() {
       var y = window.scrollY, vh = window.innerHeight;
       var pastHero = y > hero.offsetHeight * 0.6;

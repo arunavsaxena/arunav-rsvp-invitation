@@ -212,19 +212,25 @@
 
   /* ---------- Events ---------- */
   .events { background: var(--buti) 0 0 / 64px 64px, var(--paper); padding: 76px 0 52px; }
-  .day { display: flex; align-items: center; gap: 14px; margin: 46px 26px 18px; }
-  .day::before, .day::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-  .day .mg { width: 13px; height: 13px; flex-shrink: 0; }
-  .day span { font: 600 10px var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+  .day { display: flex; align-items: center; gap: 12px; margin: 56px 18px 30px; }
+  .day::before, .day::after { content: ""; flex: 1; height: 2px; border-radius: 2px; }
+  .day::before { background: linear-gradient(90deg, transparent, var(--gold-soft)); }
+  .day::after { background: linear-gradient(90deg, var(--gold-soft), transparent); }
+  .day .mg { width: 18px; height: 18px; flex-shrink: 0; }
+  .day span { display: grid; justify-items: center; gap: 2px; text-align: center; white-space: nowrap; }
+  .day span em { font: 400 40px/1 var(--script); font-style: normal; color: var(--maroon); }
+  .day span small { font: 600 10px var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--gold); }
 
   /* Events sit directly on the page: a large art panel, then the details. */
-  .event { display: flex; flex-direction: column; margin: 0 0 56px; }
-  .ev-art { order: -1; display: block; width: calc(100% - 28px); height: 210px; margin: 0 14px; border-radius: 22px;
+  .event { display: flex; flex-direction: column; margin: 0 0 52px; }
+  .ev-text { position: relative; z-index: 1; margin: -22px 18px 0; padding: 24px 0 22px; border-radius: 20px;
+    background: rgba(255,251,242,.97); box-shadow: 0 12px 30px rgba(46,31,26,.08), inset 0 0 0 1px rgba(184,137,59,.22); }
+  .ev-art { display: block; width: calc(100% - 28px); height: 236px; margin: 0 14px; border-radius: 22px;
     box-shadow: 0 16px 34px rgba(46,31,26,.14); }
-  .ev-head { padding: 26px 26px 0; text-align: center; }
-  .ev-name { font: 400 clamp(46px, 13vw, 58px)/1.05 var(--script); margin: 0; font-weight: 400; }
-  .ev-blurb { font: italic 400 18px/1.5 var(--serif); margin: 8px auto 0; max-width: 320px; color: var(--muted); text-wrap: balance; }
-  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; padding: 22px 26px 0; text-align: left; max-width: 440px; width: 100%; margin: 0 auto; }
+  .ev-head { padding: 0 16px; text-align: center; }
+  .ev-name { font: 400 clamp(38px, 11vw, 58px)/1.05 var(--script); margin: 0; font-weight: 400; white-space: nowrap; }
+  .ev-blurb { font: italic 400 18px/1.5 var(--serif); margin: 8px auto 0; max-width: 320px; color: #5E4E44; text-wrap: balance; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; padding: 20px 20px 0; margin: 20px 0 0; border-top: 1px dashed var(--line); text-align: left; }
   .fact .lbl { font: 600 9px var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--faint); }
   .fact .val { margin-top: 5px; font: 500 19px/1.25 var(--serif); color: var(--ink); }
   .fact .sub { margin-top: 3px; font: 500 10px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
@@ -364,13 +370,15 @@
     .events { padding: 104px 48px 80px; }
     .day { max-width: 1040px; margin: 56px auto 24px; }
     .day-grid { display: grid; gap: 72px; max-width: 1040px; margin: 0 auto; }
-    .event { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-areas: "art head" "art facts";
-      column-gap: 56px; align-items: center; margin: 0; }
-    .day-grid .event:nth-child(even) { grid-template-columns: 1fr 1.15fr; grid-template-areas: "head art" "facts art"; }
-    .ev-art { grid-area: art; width: 100%; height: 340px; margin: 0; }
-    .ev-head { grid-area: head; align-self: end; padding: 0; text-align: left; }
+    .event { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-areas: "art text"; align-items: center; margin: 0; }
+    .day-grid .event:nth-child(even) { grid-template-columns: 1fr 1.25fr; grid-template-areas: "text art"; }
+    .ev-art { grid-area: art; width: 100%; height: 360px; margin: 0; }
+    .ev-text { grid-area: text; margin: 0 0 0 -72px; padding: 38px 40px 34px; }
+    .day-grid .event:nth-child(even) .ev-text { margin: 0 -72px 0 0; }
+    .ev-head { padding: 0; text-align: left; }
     .ev-blurb { margin-left: 0; max-width: 380px; }
-    .facts { grid-area: facts; align-self: start; padding: 26px 0 0; margin: 0; max-width: 420px; }
+    .facts { padding: 20px 0 0; }
+    .day span em { font-size: 48px; }
     .cd { max-width: 520px; gap: 14px; }
     .rsvp { padding: 104px 48px; }
     .rsvp-card { max-width: 620px; margin: 0 auto; padding: 48px 44px 36px; }
@@ -639,14 +647,10 @@
       <svg class="orn" aria-hidden="true"><use href="#orn" /></svg>
     </div>
 
-    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span>Day one · Wed, 27 January</span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
+    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span><em>Day One</em><small>Wednesday, 27 January</small></span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
     <div class="day-grid">
 
     <article class="event ev-carnival reveal">
-      <div class="ev-head">
-        <h3 class="ev-name">Carnival Lunch</h3>
-        <p class="ev-blurb">Lunch, hi-tea by the pool, mehendi and carnival games.</p>
-      </div>
       <svg class="ev-art" viewBox="0 150 400 210" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
           <linearGradient id="cSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3E0" /><stop offset="1" stop-color="#FFC9AE" /></linearGradient>
@@ -679,18 +683,20 @@
         <rect y="352" width="400" height="8" fill="#E9A07E" />
         </g>
       </svg>
-      <div class="facts">
-        <div class="fact"><div class="lbl">When</div><div class="val">1:00 to 4:00 pm</div><div class="sub">Wed, 27 Jan</div></div>
-        <div class="fact"><div class="lbl">Where</div><div class="val">Restaurant &amp; Pool Lawn</div></div>
-        <div class="fact full"><div class="lbl">Theme</div><div class="val">Bright colours, carnival</div></div>
+      <div class="ev-text">
+        <div class="ev-head">
+          <h3 class="ev-name">Carnival Lunch</h3>
+          <p class="ev-blurb">Lunch, hi-tea by the pool, mehendi and carnival games.</p>
+        </div>
+        <div class="facts">
+          <div class="fact"><div class="lbl">When</div><div class="val">1:00 to 4:00 pm</div><div class="sub">Wed, 27 Jan</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Restaurant &amp; Pool Lawn</div></div>
+          <div class="fact full"><div class="lbl">Theme</div><div class="val">Bright colours, carnival</div></div>
+        </div>
       </div>
     </article>
 
     <article class="event ev-starry reveal">
-      <div class="ev-head">
-        <h3 class="ev-name">Engagement</h3>
-        <p class="ev-blurb">Lagan, tilak and the ring ceremony, followed by a cocktail sangeet.</p>
-      </div>
       <svg class="ev-art" viewBox="0 150 400 210" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
           <linearGradient id="nSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B1433" /><stop offset="1" stop-color="#2E2A5C" /></linearGradient>
@@ -707,23 +713,25 @@
         <path d="M0 360 V326 Q24 306 46 322 Q64 300 90 318 L310 318 Q336 300 356 318 Q378 306 400 322 V360 Z" fill="#070B1E" />
         </g>
       </svg>
-      <div class="facts">
-        <div class="fact"><div class="lbl">When</div><div class="val">6:00 pm onwards</div><div class="sub">Wed, 27 Jan</div></div>
-        <div class="fact"><div class="lbl">Where</div><div class="val">Banquet Hall &amp; Small Lawn</div></div>
-        <div class="fact full"><div class="lbl">Theme</div><div class="val">Starry night</div></div>
+      <div class="ev-text">
+        <div class="ev-head">
+          <h3 class="ev-name">Engagement</h3>
+          <p class="ev-blurb">Lagan, tilak and the ring ceremony, followed by a cocktail sangeet.</p>
+        </div>
+        <div class="facts">
+          <div class="fact"><div class="lbl">When</div><div class="val">6:00 pm onwards</div><div class="sub">Wed, 27 Jan</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Banquet Hall &amp; Small Lawn</div></div>
+          <div class="fact full"><div class="lbl">Theme</div><div class="val">Starry night</div></div>
+        </div>
       </div>
     </article>
 
     </div>
 
-    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span>Day two · Thu, 28 January</span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
+    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span><em>Day Two</em><small>Thursday, 28 January</small></span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
     <div class="day-grid">
 
     <article class="event ev-shaadi reveal">
-      <div class="ev-head">
-        <h3 class="ev-name">Shaadi</h3>
-        <p class="ev-blurb">Baraat, varmala and phere. Seven steps, seven promises.</p>
-      </div>
       <svg class="ev-art" viewBox="0 150 400 210" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
           <linearGradient id="tSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4DC" /><stop offset="1" stop-color="#F4B86C" /></linearGradient>
@@ -737,18 +745,20 @@
         <rect y="354" width="400" height="6" fill="#7A1F2B" opacity=".55" />
         </g>
       </svg>
-      <div class="facts">
-        <div class="fact"><div class="lbl">When</div><div class="val">10:00 am to 5:30 pm</div><div class="sub">Thu, 28 Jan</div></div>
-        <div class="fact"><div class="lbl">Where</div><div class="val">Big Lawn &amp; Poolside</div></div>
-        <div class="fact full"><div class="lbl">Theme</div><div class="val">South Indian, temple inspired</div></div>
+      <div class="ev-text">
+        <div class="ev-head">
+          <h3 class="ev-name">Shaadi</h3>
+          <p class="ev-blurb">Baraat, varmala and phere. Seven steps, seven promises.</p>
+        </div>
+        <div class="facts">
+          <div class="fact"><div class="lbl">When</div><div class="val">10:00 am to 5:30 pm</div><div class="sub">Thu, 28 Jan</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Big Lawn &amp; Poolside</div></div>
+          <div class="fact full"><div class="lbl">Theme</div><div class="val">South Indian, temple inspired</div></div>
+        </div>
       </div>
     </article>
 
     <article class="event ev-regal reveal">
-      <div class="ev-head">
-        <h3 class="ev-name">Reception</h3>
-        <p class="ev-blurb">Our first dance as husband and wife, performances by friends and dinner.</p>
-      </div>
       <svg class="ev-art" viewBox="0 150 400 210" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
           <linearGradient id="rBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5C0D19" /><stop offset="1" stop-color="#8E1B2C" /></linearGradient>
@@ -763,10 +773,16 @@
         <rect y="352" width="400" height="8" fill="#2A040B" />
         </g>
       </svg>
-      <div class="facts">
-        <div class="fact"><div class="lbl">When</div><div class="val">8:00 pm onwards</div><div class="sub">Thu, 28 Jan</div></div>
-        <div class="fact"><div class="lbl">Where</div><div class="val">Big Lawn &amp; Banquet Hall</div></div>
-        <div class="fact full"><div class="lbl">Theme</div><div class="val">Regal red</div></div>
+      <div class="ev-text">
+        <div class="ev-head">
+          <h3 class="ev-name">Reception</h3>
+          <p class="ev-blurb">Our first dance as husband and wife, performances by friends and dinner.</p>
+        </div>
+        <div class="facts">
+          <div class="fact"><div class="lbl">When</div><div class="val">8:00 pm onwards</div><div class="sub">Thu, 28 Jan</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Big Lawn &amp; Banquet Hall</div></div>
+          <div class="fact full"><div class="lbl">Theme</div><div class="val">Regal red</div></div>
+        </div>
       </div>
     </article>
     </div>
@@ -926,6 +942,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=288d67de"></script>
+<script src="app.js?v=9683df45"></script>
 </body>
 </html>
