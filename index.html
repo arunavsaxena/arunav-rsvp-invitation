@@ -441,7 +441,7 @@
   form { display: grid; gap: 20px; margin-top: 28px; text-align: left; }
   .fld-wrap { display: grid; gap: 8px; }
   .lbl { font: 600 11.5px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-  .lbl .opt { letter-spacing: .04em; text-transform: none; font-weight: 400; color: var(--faint); }
+  .lbl .opt, .sublbl .opt { letter-spacing: .04em; text-transform: none; font-weight: 400; color: var(--faint); }
   .fld { width: 100%; border: 1px solid #DCCDB5; background: #FFFDF8; padding: 14px; border-radius: 12px; outline: none;
     font: 400 16px var(--sans); transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none; }
   select.fld { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%237A1F2B' stroke-width='1.5'/%3E%3C/svg%3E");
@@ -1303,8 +1303,8 @@
             </div>
           </fieldset>
           <fieldset>
-            <legend class="lbl">Identity proof for each guest</legend>
-            <p class="id-help">Aadhaar, driving licence or passport only, as a photo or PDF up to 5 MB. We need one for every guest for hotel check-in. Files go to a private folder that only our family can open.</p>
+            <legend class="lbl">Guests <span class="opt">(ID proof optional)</span></legend>
+            <p class="id-help">The hotel asks for an ID for every guest at check-in, so adding them now saves time at the desk. Aadhaar, driving licence or passport, as a photo or PDF up to 5 MB. Files go to a private folder that only our family can open.</p>
             <div class="guest-ids" id="guest-ids"></div>
           </fieldset>
         </div>
@@ -1334,16 +1334,15 @@
     <svg class="orn reveal" aria-hidden="true"><use href="#orn" /></svg>
     <div class="gal-wrap reveal">
       <button type="button" class="gal-nav prev" aria-label="Previous photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
-      <ul class="gal-track" id="gal-track" data-full="01,07,05,10,02,09,06,11,12">
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="0" aria-label="Open photo 1 of 9"><img src="assets/gallery/t-01.jpg" alt="Arunav and Shambhavi at their roka, photo 1" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="1" aria-label="Open photo 2 of 9"><img src="assets/gallery/t-07.jpg" alt="Arunav and Shambhavi at their roka, photo 2" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="2" aria-label="Open photo 3 of 9"><img src="assets/gallery/t-05.jpg" alt="Arunav and Shambhavi at their roka, photo 3" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="3" aria-label="Open photo 4 of 9"><img src="assets/gallery/t-10.jpg" alt="Arunav and Shambhavi at their roka, photo 4" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="4" aria-label="Open photo 5 of 9"><img src="assets/gallery/t-02.jpg" alt="Arunav and Shambhavi at their roka, photo 5" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="5" aria-label="Open photo 6 of 9"><img src="assets/gallery/t-09.jpg" alt="Arunav and Shambhavi at their roka, photo 6" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="6" aria-label="Open photo 7 of 9"><img src="assets/gallery/t-06.jpg" alt="Arunav and Shambhavi at their roka, photo 7" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="7" aria-label="Open photo 8 of 9"><img src="assets/gallery/t-11.jpg" alt="Arunav and Shambhavi at their roka, photo 8" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="8" aria-label="Open photo 9 of 9"><img src="assets/gallery/t-12.jpg" alt="Arunav and Shambhavi at their roka, photo 9" loading="lazy" decoding="async" /></button></li>
+      <ul class="gal-track" id="gal-track" data-full="07,05,10,02,09,06,11,12">
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="0" aria-label="Open photo 1 of 8"><img src="assets/gallery/t-07.jpg" alt="Arunav and Shambhavi at their roka, photo 1" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="1" aria-label="Open photo 2 of 8"><img src="assets/gallery/t-05.jpg" alt="Arunav and Shambhavi at their roka, photo 2" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="2" aria-label="Open photo 3 of 8"><img src="assets/gallery/t-10.jpg" alt="Arunav and Shambhavi at their roka, photo 3" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="3" aria-label="Open photo 4 of 8"><img src="assets/gallery/t-02.jpg" alt="Arunav and Shambhavi at their roka, photo 4" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="4" aria-label="Open photo 5 of 8"><img src="assets/gallery/t-09.jpg" alt="Arunav and Shambhavi at their roka, photo 5" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="5" aria-label="Open photo 6 of 8"><img src="assets/gallery/t-06.jpg" alt="Arunav and Shambhavi at their roka, photo 6" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="6" aria-label="Open photo 7 of 8"><img src="assets/gallery/t-11.jpg" alt="Arunav and Shambhavi at their roka, photo 7" loading="lazy" decoding="async" /></button></li>
+        <li class="gal-item"><button type="button" class="gal-frame" data-i="7" aria-label="Open photo 8 of 8"><img src="assets/gallery/t-12.jpg" alt="Arunav and Shambhavi at their roka, photo 8" loading="lazy" decoding="async" /></button></li>
       </ul>
       <button type="button" class="gal-nav next" aria-label="Next photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
     </div>
@@ -1380,6 +1379,6 @@
   <a href="#rsvp">RSVP</a>
 </nav>
 
-<script src="app.js?v=2092d1a5"></script>
+<script src="app.js?v=5316c9af"></script>
 </body>
 </html>

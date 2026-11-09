@@ -154,20 +154,25 @@ function saveRsvp_(b) {
     oneOf_(b.departDate, DEPART_DATES, 'departure date');
     time_(b.departTime, 'departure time');
     oneOf_(b.driver, ['Yes', 'No'], 'driver answer');
-    if (!Array.isArray(b.ids) || b.ids.length !== guests) throw new Reject('Please add an ID proof for every guest.');
+    if (!Array.isArray(b.ids) || b.ids.length !== guests) throw new Reject('Please add the name of every guest.');
+    // ID proofs are optional. A guest marked file:false sent none; older pages
+    // omit the flag and always sent one.
+    var expected = 0;
     var list = b.ids.map(function (g, i) {
-      oneOf_(g && g.idType, ID_TYPES, 'ID type');
-      return (i + 1) + '. ' + text_(g.name, 80, 'guest name') + ' (' + g.idType + ')';
+      if (!g || typeof g !== 'object') throw new Reject('Please add the name of every guest.');
+      var hasId = g.file !== false;
+      if (hasId) { oneOf_(g.idType, ID_TYPES, 'ID type'); expected++; }
+      return (i + 1) + '. ' + text_(g.name, 80, 'guest name') + ' (' + (hasId ? g.idType : 'no ID yet') + ')';
     }).join('\n');
 
-    var folder = submissionFolder_(b.submissionId, name, false);
+    var folder = expected ? submissionFolder_(b.submissionId, name, false) : null;
     var count = 0;
     if (folder) { var it = folder.getFiles(); while (it.hasNext()) { it.next(); count++; } }
-    if (count !== guests) throw new Reject('Some ID proofs did not upload. Please try again.');
+    if (count !== expected) throw new Reject('Some ID proofs did not upload. Please try again.');
 
     row.guests = guests; row.arriveBy = b.arriveBy; row.arriveDate = b.arriveDate; row.arriveTime = b.arriveTime;
     row.departBy = b.departBy; row.departDate = b.departDate; row.departTime = b.departTime;
-    row.driver = b.driver; row.ids = list; row.folder = folder.getUrl();
+    row.driver = b.driver; row.ids = list; row.folder = folder ? folder.getUrl() : '';
   }
 
   bump_('replies', LIMITS.replies10m, LIMITS.repliesDay);

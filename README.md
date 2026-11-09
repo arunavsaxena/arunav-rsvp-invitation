@@ -54,9 +54,9 @@ All of these are at the top of `app.js`:
 
 ## RSVPs and ID proofs
 
-Every field is required. A guest who declines gives only name and phone. A guest
+Every field is required except the ID proofs. A guest who declines gives only name and phone. A guest
 who attends also gives the guest count, arrival and departure (road or train, date,
-time), whether a driver is coming, and **one ID proof per guest** (Aadhaar, driving
+time), whether a driver is coming, and **an optional ID proof per guest** (Aadhaar, driving
 licence or passport, as a photo or PDF up to 5 MB). Phone photos are shrunk to a
 1800px JPEG in the browser before upload.
 

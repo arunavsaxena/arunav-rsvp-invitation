@@ -396,12 +396,12 @@
     row.className = "trip guest-id";
     row.innerHTML =
       '<div class="g-title">Guest ' + (i + 1) + (i === 0 ? ' <span class="opt" style="font:400 14px var(--sans);color:var(--faint)">(you)</span>' : '') + '</div>' +
-      '<div class="fld-wrap"><label class="sublbl" for="gid-name-' + i + '">Full name as on ID</label>' +
+      '<div class="fld-wrap"><label class="sublbl" for="gid-name-' + i + '">Full name</label>' +
       '<input class="fld" id="gid-name-' + i + '" data-role="g-name" autocomplete="off" /></div>' +
       '<div class="fld-wrap"><label class="sublbl" for="gid-type-' + i + '">ID type</label>' +
       '<select class="fld" id="gid-type-' + i + '" data-role="g-type"><option value="">Select</option>' +
       ID_TYPES.map(function (t) { return "<option>" + t + "</option>"; }).join("") + '</select></div>' +
-      '<div class="fld-wrap"><label class="sublbl" for="gid-file-' + i + '">ID proof</label>' +
+      '<div class="fld-wrap"><label class="sublbl" for="gid-file-' + i + '">ID proof <span class="opt">(optional)</span></label>' +
       '<label class="file-drop">' + uploadIcon + '<span class="fd-text">Choose photo or PDF</span>' +
       '<input type="file" id="gid-file-' + i + '" data-role="g-file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf" /></label></div>';
     var file = row.querySelector('[data-role="g-file"]');
@@ -569,9 +569,10 @@
       var fl = rows[i].querySelector('[data-role="g-file"]');
       var label = "guest " + (i + 1);
       if (!nm.value.trim()) return invalid("Please add the full name of " + label + ".", nm);
-      if (ID_TYPES.indexOf(tp.value) === -1) return invalid("Please choose the ID type for " + label + ".", tp);
+      // ID proofs are optional: an RSVP without them is better than no RSVP.
       var f = fl.files[0];
-      if (!f) return invalid("Please upload an ID proof for " + label + ".", fl);
+      if (!f) { guests.push({ name: nm.value.trim(), idType: "", file: null }); continue; }
+      if (ID_TYPES.indexOf(tp.value) === -1) return invalid("Please choose the ID type for " + label + ".", tp);
       var t = fileType(f);
       if (OK_TYPES.indexOf(t) === -1) return invalid("The ID for " + label + " must be a photo or a PDF.", fl);
       var cap = (t === "application/pdf" || /heic|heif/.test(t)) ? MAX_FILE : MAX_RAW_IMAGE;
@@ -601,9 +602,11 @@
     var id = newId();
     var d = got.data;
     try {
-      for (var i = 0; i < got.guests.length; i++) {
+      var withId = got.guests.filter(function (g) { return g.file; });
+      for (var i = 0, done = 0; i < got.guests.length; i++) {
         var g = got.guests[i];
-        setBusy("Uploading ID " + (i + 1) + " of " + got.guests.length + "…");
+        if (!g.file) continue;
+        setBusy("Uploading ID " + (++done) + " of " + withId.length + "…");
         var prepared = await prepareFile(g.file);
         await post({
           kind: "file", submissionId: id, primaryName: d.name, index: i,
@@ -612,7 +615,7 @@
       }
       setBusy("Saving your RSVP…");
       var row = Object.assign({ kind: "rsvp", submissionId: id }, d, {
-        ids: got.guests.map(function (g) { return { name: g.name, idType: g.idType }; })
+        ids: got.guests.map(function (g) { return { name: g.name, idType: g.idType, file: !!g.file }; })
       });
       await post(row);
     } catch (err) {
@@ -631,7 +634,7 @@
     var going = d.attending === "Yes";
     document.getElementById("ty-title").textContent = going ? "Dhanyavaad" : "We will miss you";
     document.getElementById("ty-msg").textContent = going
-      ? "Your reply and ID proofs are with us. We cannot wait to welcome you in Jim Corbett."
+      ? "Your reply is with us. We cannot wait to welcome you in Jim Corbett."
       : "Thank you for letting us know. Your blessings mean the world to us.";
     var sum = document.getElementById("ty-summary");
     sum.innerHTML = "";
@@ -641,7 +644,8 @@
       li("Arriving:", d.arriveDate + ", " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
       li("Leaving:", d.departDate + ", " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
       li("Driver:", d.driver);
-      li("ID proofs:", got.guests.length + " uploaded");
+      var up = got.guests.filter(function (g) { return g.file; }).length;
+      li("ID proofs:", up === got.guests.length ? "all " + up + " uploaded" : up + " of " + got.guests.length + " uploaded");
     }
     showPrevNote();
     form.hidden = true;
