@@ -114,10 +114,21 @@
 
   // ---- Letter language toggle ----------------------------------------------
   var langBtns = document.querySelectorAll(".lang-toggle button");
+  var langLens = document.querySelector(".lang-toggle .lens");
+  function placeLangLens() {
+    var on = document.querySelector('.lang-toggle button[aria-pressed="true"]');
+    if (!on || !langLens) return;
+    langLens.style.width = on.offsetWidth + "px";
+    langLens.style.transform = "translateX(" + on.offsetLeft + "px)";
+  }
+  placeLangLens();
+  window.addEventListener("resize", placeLangLens);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeLangLens);
   langBtns.forEach(function (b) {
     b.addEventListener("click", function () {
       var en = b.getAttribute("data-lang") === "en";
       langBtns.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      placeLangLens();
       // Both versions stay in the layout (stacked), so the card keeps one height.
       [["letter-hi", !en], ["await-hi", !en], ["letter-en", en], ["await-en", en]].forEach(function (p) {
         var el = document.getElementById(p[0]);
