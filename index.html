@@ -337,7 +337,7 @@
   .venue { position: relative; background: var(--ivory); overflow: hidden; overflow: clip; }
   .venue > * { position: relative; }
   /* Plinth at the foot of the arch: fixed-size lines (not stretched with the arch) so the diyas always sit on it. */
-  .venue-frame > .venue-base { position: absolute; left: 50%; bottom: 34px; width: min(380px, 90%); transform: translateX(-50%);
+  .venue-frame > .venue-base { position: absolute; left: 50%; bottom: 34px; width: min(560px, 94%); transform: translateX(-50%);
     display: flex; align-items: flex-end; justify-content: space-between; padding: 0 32px 15px; pointer-events: none; }
   .venue-base::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 15px; box-sizing: border-box;
     border-top: 1.2px solid rgba(184,137,59,.5); border-bottom: 1.2px solid rgba(184,137,59,.5);
@@ -347,14 +347,13 @@
   .venue-base .vdiya { width: 34px; height: 30px; }
   .venue-base .vorn { width: 110px; height: 18px; color: var(--gold); margin-bottom: 4px; }
   .venue-frame { position: absolute; inset: 0; pointer-events: none; }
-  .venue-frame > .venue-arch { position: absolute; left: 50%; top: 34px; bottom: 34px; width: min(380px, 90%); height: calc(100% - 68px); transform: translateX(-50%); color: var(--gold); pointer-events: none; }
+  .venue-frame > .venue-arch { position: absolute; left: 50%; top: 34px; bottom: 34px; width: min(560px, 94%); height: calc(100% - 68px); transform: translateX(-50%); color: var(--gold); pointer-events: none; }
   .venue img.logo { width: min(230px, 62vw); height: auto; margin: 26px auto 22px; mix-blend-mode: multiply; }
   .venue h3 { font: 500 clamp(26px, 6.5vw, 34px) var(--serif); margin: 0; color: var(--ink); }
   .venue .addr { font: 500 18px/1.8 var(--serif); color: #4E3E34; margin: 12px 0 18px; }
   .link-maps { display: inline-block; border-bottom: 1px solid rgba(122,31,43,.4); padding-bottom: 3px; color: var(--maroon);
     font: 600 12px var(--sans); letter-spacing: .2em; text-transform: uppercase; transition: color .2s, border-color .2s; }
   .link-maps:hover { color: var(--gold); border-bottom-color: var(--gold); }
-  .venue .note { font: 500 17.5px/1.7 var(--serif); color: var(--muted); margin: 22px auto 0; max-width: 290px; }
   .venue { padding-bottom: 120px; }
 
   /* ---------- Events ---------- */
@@ -849,7 +848,6 @@
     <h3 class="reveal">Evara Resort &amp; Spa</h3>
     <p class="addr reveal">Village Bhalon, Patkote, Ramnagar<br />Jim Corbett, Uttarakhand 263159</p>
     <a class="link-maps reveal" href="https://www.google.com/maps/search/?api=1&amp;query=Evara%20Resort%20and%20Spa%20Jim%20Corbett%20Uttarakhand" target="_blank" rel="noopener">Get directions on Google Maps</a>
-    <p class="note reveal">Both days of celebration will unfold here.<br />Pick-up and drop from Kathgodam railway station will be arranged.</p>
   </section>
 
   <!-- ============ Events ============ -->
