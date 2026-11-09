@@ -251,7 +251,7 @@
       var y = window.scrollY, vh = window.innerHeight;
       if (heroImg) heroImg.setAttribute("transform", "translate(0 " + Math.min(24, y * 0.05).toFixed(2) + ")");
       arts.forEach(function (g) {
-        var r = g.ownerSVGElement.getBoundingClientRect();
+        var r = (g.ownerSVGElement || g.parentElement).getBoundingClientRect();
         if (r.bottom < 0 || r.top > vh) return;
         var p = (r.top + r.height / 2 - vh / 2) / vh;          // -1 (above) .. 1 (below)
         g.style.transform = "translateY(" + (p * -9).toFixed(2) + "px) scale(1.07)";
