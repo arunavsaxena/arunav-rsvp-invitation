@@ -263,6 +263,18 @@
   footer .meta { margin-top: 28px; padding: 0 26px; font: 600 9px/2 var(--sans); letter-spacing: .26em; text-transform: uppercase; color: rgba(251,239,220,.45); }
 
 
+  /* ---------- Envelope on wide screens: landscape ---------- */
+  @media (min-width: 760px) and (min-height: 520px) {
+    .env { width: min(800px, 84vw); height: min(510px, 74vh); }
+    .env-flap { height: 56%; }
+    .seal { top: 56%; width: 172px; height: 172px; }
+    .env-top { top: 9%; font-size: 19px; letter-spacing: .04em; }
+    .env-text { bottom: 8%; }
+    .env-text .t1 { font-size: 27px; }
+    .env-text .t2 { font-size: 10px; }
+    #intro.is-open .env { transform: translateY(10vh) scale(.97); }
+  }
+
   /* ---------- Desktop & tablet: full-width layout ---------- */
   @media (min-width: 760px) {
     body { background: var(--ivory); }
