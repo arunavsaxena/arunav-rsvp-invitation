@@ -423,6 +423,7 @@
   .day span { display: grid; justify-items: center; gap: 2px; text-align: center; white-space: nowrap; }
   .day span em { font: 400 40px/1 var(--script); font-style: normal; color: var(--maroon); }
   .day span small { font: 600 14px var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+  @media (max-width: 420px) { .day { gap: 8px; margin-left: 12px; margin-right: 12px; } .day span small { font-size: 12.5px; letter-spacing: .12em; } }
 
   /* Events sit directly on the page: a large art panel, then the details. */
   .event { display: flex; flex-direction: column; margin: 0 0 52px; }
@@ -901,7 +902,7 @@
       <svg class="orn" aria-hidden="true"><use href="#orn" /></svg>
     </div>
 
-    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span><em>Day One</em><small>Wednesday, 27 January</small></span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
+    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span><em>Day One</em><small>Wednesday, 27 January 2027</small></span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
     <div class="day-grid">
 
     <article class="event ev-carnival reveal">
@@ -912,8 +913,8 @@
           <p class="ev-blurb">Lunch, hi-tea by the pool, mehendi and carnival games.</p>
         </div>
         <div class="facts">
-          <div class="fact"><div class="lbl">When</div><div class="val">1:00 pm</div><div class="sub">Wed, 27 Jan</div></div>
-          <div class="fact"><div class="lbl">Where</div><div class="val">Restaurant &amp; Pool Lawn</div></div>
+          <div class="fact"><div class="lbl">When</div><div class="val">1:00 pm</div><div class="sub">Wed, 27 Jan 2027</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Restaurant &amp; Poolside</div></div>
           <div class="fact full"><div class="lbl">Décor</div><div class="val">Bright colours, carnival</div></div>
         </div>
       </div>
@@ -927,8 +928,8 @@
           <p class="ev-blurb">Cocktails, dinner and sangeet: an evening of music and dancing.</p>
         </div>
         <div class="facts">
-          <div class="fact"><div class="lbl">When</div><div class="val">6:00 pm</div><div class="sub">Wed, 27 Jan</div></div>
-          <div class="fact"><div class="lbl">Where</div><div class="val">Banquet Hall &amp; Small Lawn</div></div>
+          <div class="fact"><div class="lbl">When</div><div class="val">6:00 pm</div><div class="sub">Wed, 27 Jan 2027</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Banquet Hall &amp; Rock Garden</div></div>
           <div class="fact full"><div class="lbl">Décor</div><div class="val">Starry night</div></div>
         </div>
       </div>
@@ -936,7 +937,7 @@
 
     </div>
 
-    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span><em>Day Two</em><small>Thursday, 28 January</small></span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
+    <div class="day reveal"><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg><span><em>Day Two</em><small>Thursday, 28 January 2027</small></span><svg class="mg" viewBox="-6 -6 12 12" aria-hidden="true"><use href="#marigold" /></svg></div>
     <div class="day-grid">
 
     <article class="event ev-shaadi reveal">
@@ -947,8 +948,8 @@
           <p class="ev-blurb">Baraat, varmala and phere. Seven steps, seven promises.</p>
         </div>
         <div class="facts">
-          <div class="fact"><div class="lbl">When</div><div class="val">10:00 am</div><div class="sub">Thu, 28 Jan</div></div>
-          <div class="fact"><div class="lbl">Where</div><div class="val">Big Lawn &amp; Poolside</div></div>
+          <div class="fact"><div class="lbl">When</div><div class="val">10:00 am</div><div class="sub">Thu, 28 Jan 2027</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Wedding Lawn 1 &amp; Poolside</div></div>
           <div class="fact full"><div class="lbl">Décor</div><div class="val">South Indian, temple inspired</div></div>
         </div>
       </div>
@@ -962,8 +963,8 @@
           <p class="ev-blurb">Dinner, music and one more evening of celebration together.</p>
         </div>
         <div class="facts">
-          <div class="fact"><div class="lbl">When</div><div class="val">8:00 pm</div><div class="sub">Thu, 28 Jan</div></div>
-          <div class="fact"><div class="lbl">Where</div><div class="val">Big Lawn &amp; Banquet Hall</div></div>
+          <div class="fact"><div class="lbl">When</div><div class="val">8:00 pm</div><div class="sub">Thu, 28 Jan 2027</div></div>
+          <div class="fact"><div class="lbl">Where</div><div class="val">Wedding Lawn 2 &amp; Poolside</div></div>
           <div class="fact full"><div class="lbl">Décor</div><div class="val">Regal red</div></div>
         </div>
       </div>
@@ -1047,8 +1048,8 @@
               <div class="fld-wrap">
                 <label class="sublbl" for="rsvp-arrive-date">Date</label>
                 <select class="fld" id="rsvp-arrive-date" name="arriveDate">
-                <option selected>Wed, 27 Jan</option>
-                <option>Thu, 28 Jan</option>
+                <option value="Wed, 27 Jan" selected>Wed, 27 Jan 2027</option>
+                <option value="Thu, 28 Jan">Thu, 28 Jan 2027</option>
                 </select>
               </div>
               <div class="fld-wrap">
@@ -1078,8 +1079,8 @@
               <div class="fld-wrap">
                 <label class="sublbl" for="rsvp-depart-date">Date</label>
                 <select class="fld" id="rsvp-depart-date" name="departDate">
-                <option>Thu, 28 Jan</option>
-                <option selected>Fri, 29 Jan</option>
+                <option value="Thu, 28 Jan">Thu, 28 Jan 2027</option>
+                <option value="Fri, 29 Jan" selected>Fri, 29 Jan 2027</option>
                 </select>
               </div>
               <div class="fld-wrap">
@@ -1184,6 +1185,6 @@
   <svg class="ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6"/><path class="wave" d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
   <svg class="ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path d="M16 9.5l5 5m0-5l-5 5"/></svg>
 </button>
-<script src="app.js?v=bb8f25d0"></script>
+<script src="app.js?v=ae4af0bb"></script>
 </body>
 </html>

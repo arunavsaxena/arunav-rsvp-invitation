@@ -364,10 +364,10 @@
   function icsFile() {
     var loc = "Evara Resort & Spa\\, Village Bhalon\\, Patkote\\, Ramnagar\\, Jim Corbett\\, Uttarakhand 263159";
     var events = [
-      ["carnival", "Carnival Lunch · Arunav & Shambhavi", "20270127T073000Z", "20270127T103000Z", "Lunch\\, hi-tea by the pool\\, mehendi and carnival games. Restaurant & Pool Lawn."],
-      ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Cocktails\\, dinner and sangeet: an evening of music and dancing. Banquet Hall & Small Lawn."],
-      ["shaadi", "Shaadi · Arunav & Shambhavi", "20270128T043000Z", "20270128T120000Z", "Baraat\\, varmala and phere. Big Lawn & Poolside."],
-      ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Dinner\\, music and one more evening of celebration together. Big Lawn & Banquet Hall."]
+      ["carnival", "Carnival Lunch · Arunav & Shambhavi", "20270127T073000Z", "20270127T103000Z", "Lunch\\, hi-tea by the pool\\, mehendi and carnival games. Restaurant & Poolside."],
+      ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Cocktails\\, dinner and sangeet: an evening of music and dancing. Banquet Hall & Rock Garden."],
+      ["shaadi", "Shaadi · Arunav & Shambhavi", "20270128T043000Z", "20270128T120000Z", "Baraat\\, varmala and phere. Wedding Lawn 1 & Poolside."],
+      ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Dinner\\, music and one more evening of celebration together. Wedding Lawn 2 & Poolside."]
     ];
     var stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
     var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arunav and Shambhavi//Wedding//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
@@ -721,9 +721,9 @@
     function li(label, text) { var n = document.createElement("li"); var b = document.createElement("b"); b.textContent = label + " "; n.appendChild(b); n.appendChild(document.createTextNode(text)); sum.appendChild(n); }
     if (going) {
       li("Guests:", d.guests + (d.guests === "1" ? " person" : " people"));
-      li("Arriving:", d.arriveDate + ", " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
+      li("Arriving:", d.arriveDate + " 2027, " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
       if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? "Yes" + (d.pickupTrain ? ", train " + d.pickupTrain : "") : "No, thanks");
-      li("Leaving:", d.departDate + ", " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
+      li("Leaving:", d.departDate + " 2027, " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
       if (d.drop) li("Station drop:", d.drop === "Yes" ? "Yes" + (d.dropTrain ? ", train " + d.dropTrain : "") : "No, thanks");
       li("Driver:", d.driver);
       var up = got.guests.filter(function (g) { return g.file; }).length;
