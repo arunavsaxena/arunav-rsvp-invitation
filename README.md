@@ -122,13 +122,58 @@ deployment.
 
 ## Changing the backend
 
-The deployed script is `apps-script/Code.gs` with one difference: `DRIVE_FOLDER_ID`
-is set to the RSVP IDs folder there and left blank here. To ship a change:
+This repo holds the source of truth, but it is **not** what is running: the
+deployed copy has `DRIVE_FOLDER_ID` set to the RSVP IDs folder, and here it is
+blank. `Code.gs` also serves the bride's site, so a careless paste takes her
+RSVPs down as well as yours. Every change goes out like this.
 
-1. Edit `apps-script/Code.gs` here, then paste it into the Apps Script editor,
-   keeping the editor's `DRIVE_FOLDER_ID` line.
-2. **Deploy → Manage deployments → Edit → Version: New version → Deploy.** The URL
-   in `RSVP_ENDPOINT` (in `app.js`) stays the same.
+1. **Open the editor.** The RSVP Sheet → **Extensions → Apps Script**. Both
+   sides live in one file: hers is everything named `BRIDE_*`, plus
+   `saveBrideRsvp_`, `brideSheet_` and `setupBrideInviteKey`.
+2. **Check the editor against this repo first.** Click in the code, select all,
+   copy, and diff it against `apps-script/Code.gs`. If they differ, someone
+   edited in the browser without committing: work out which is newer before you
+   overwrite anything.
+3. **Make the change here**, not in the browser, and keep `DRIVE_FOLDER_ID` and
+   `BRIDE_DRIVE_FOLDER_ID` blank in the repo.
+4. **Keep every validated value ASCII.** Anything the backend checks against a
+   fixed list (dates, modes, yes/no answers, ID types) must be plain ASCII on
+   both sides. A middle dot does not survive the POST into Apps Script and every
+   reply is rejected.
+5. **Paste it in.** In the editor: select all, paste, then restore the
+   `DRIVE_FOLDER_ID` line the deployed copy had. Save (⌘S / Ctrl+S) and wait for
+   "Saved to Drive". A syntax error blocks the save, which is the first check.
+6. **Verify what actually landed.** Select all, copy, and diff against the file
+   you meant to deploy. The editor is easy to paste into by accident, and a
+   clipboard that changed under you is hard to spot by eye.
+7. **Deploy.** **Deploy → Manage deployments → pencil → Version: New version →
+   Deploy.** The deployment id, and so the `/exec` URL in `app.js` and on the
+   bride's site, stays the same.
+8. **Send one real reply** from the site and confirm the row lands, then delete
+   that row. Apps Script errors are invisible to the guest beyond a short
+   message, so a live reply is the only real test.
+9. **Commit and push**, so the next person does not start from a version that is
+   behind what is running.
+
+To undo a bad paste before saving: ⌘Z / Ctrl+Z in the editor restores the
+previous content. If a bad version is already deployed, redeploy from the repo
+file rather than editing the live one by hand.
+
+### If someone else is deploying
+
+Script access is granted by sharing the **Sheet** as Editor: the script is bound
+to it and has no sharing of its own. That also hands over every RSVP on both
+sides, so decide on the data access first. Two rules for whoever has it:
+
+- **Deploy a new version of the existing deployment, never a new deployment.** A
+  new one gets a new URL and silently breaks both sites.
+- **Don't run `setupInviteKey`, `setupBrideInviteKey` or the rotate functions
+  from the editor.** Those run as them, and the Drive folders aren't shared with
+  them, so they'll fail or create stray folders in their own Drive. Keep those
+  for the owner.
+
+One person in the editor at a time, working from the repo file: the Apps Script
+editor has no merge, so whoever saves last wins.
 
 A copy of each reply, without the files, is saved in the guest's browser under
 `localStorage` `sa-wedding-invite-rsvps`.
