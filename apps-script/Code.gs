@@ -267,8 +267,9 @@ function saveBrideRsvp_(b) {
 
   var guests = int_(b.guests, 1, BRIDE_MAX_GUESTS, 'number of guests');
 
+  // Her page no longer asks which days. A reply from an older page still
+  // carries them, so they are recorded, but nothing requires them.
   var days = subset_(b.days, BRIDE_DAYS, 'day');
-  if (!days.length) throw new Reject('Please tell us which day or days you will join us.');
 
   oneOf_(b.travelBy, BRIDE_MODES, 'mode of transport');
   oneOf_(b.arriveDate, BRIDE_ARRIVE_DATES, 'arrival date');
