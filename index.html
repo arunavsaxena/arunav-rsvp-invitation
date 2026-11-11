@@ -234,52 +234,6 @@
   .names, .families .who, .families .hosts-sign, .day span em, .ev-name, .rsvp-title, .ty, footer .closing {
     -webkit-text-stroke: .6px currentColor; paint-order: stroke fill; }
 
-  /* ---------- Gallery: jharokha-arched photos in a glassy strip ---------- */
-  .gallery { background: var(--buti) 0 0 / 64px 64px, var(--paper); padding-left: 0; padding-right: 0; }
-  .gal-wrap { position: relative; margin-top: 30px; }
-  .gal-track { list-style: none; margin: 0; display: flex; gap: 16px; overflow-x: auto; overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory; scroll-padding: 0 24px; padding: 14px 24px 22px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .gal-track::-webkit-scrollbar { display: none; }
-  .gal-item { flex: 0 0 68%; max-width: 300px; scroll-snap-align: center; }
-  .gal-frame { --arch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' preserveAspectRatio='none'%3E%3Cpath d='M0 400V150C0 85 52 50 98 32C120 24 140 12 150 0C160 12 180 24 202 32C248 50 300 85 300 150V400Z'/%3E%3C/svg%3E"); position: relative; display: block; width: 100%; aspect-ratio: 3 / 4; padding: 7px; border: 0; cursor: zoom-in;
-    background: linear-gradient(150deg, rgba(255,255,255,.95), rgba(232,198,119,.75) 35%, rgba(255,250,238,.85) 60%, rgba(201,163,90,.8));
-    -webkit-mask: var(--arch) center / 100% 100% no-repeat; mask: var(--arch) center / 100% 100% no-repeat;
-    transition: transform .35s cubic-bezier(.2,.7,.2,1); }
-  .gal-item { filter: drop-shadow(0 14px 22px rgba(74,15,26,.18)); }
-  .gal-frame img { display: block; width: 100%; height: 100%; object-fit: cover;
-    -webkit-mask: var(--arch) center / 100% 100% no-repeat; mask: var(--arch) center / 100% 100% no-repeat; }
-  .gal-frame::after { content: ""; position: absolute; inset: 7px; pointer-events: none;
-    background: linear-gradient(170deg, rgba(255,255,255,.35), rgba(255,255,255,0) 30%);
-    -webkit-mask: var(--arch) center / 100% 100% no-repeat; mask: var(--arch) center / 100% 100% no-repeat; }
-  .gal-frame:hover { transform: translateY(-4px); }
-  .gal-frame:focus-visible { outline: none; }
-  .gal-frame:focus-visible img { filter: brightness(1.06); }
-  .gal-nav { display: none; position: absolute; top: 50%; z-index: 2; width: 46px; height: 46px; margin-top: -23px; border-radius: 50%; cursor: pointer;
-    color: var(--maroon); border: 1px solid rgba(255,255,255,.85);
-    background: linear-gradient(160deg, rgba(255,255,255,.8), rgba(255,250,240,.5));
-    -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
-    box-shadow: 0 8px 22px rgba(74,15,26,.16), inset 0 1px 0 #fff; place-items: center; transition: opacity .25s, transform .2s; }
-  .gal-nav svg { width: 20px; height: 20px; }
-  .gal-nav.next svg { transform: scaleX(-1); }
-  .gal-nav.prev { left: 18px; } .gal-nav.next { right: 18px; }
-  .gal-nav:hover { transform: scale(1.06); }
-  .gal-nav[disabled] { opacity: 0; pointer-events: none; }
-  .gal-progress { width: 120px; height: 3px; margin: 6px auto 0; border-radius: 3px; background: rgba(184,137,59,.22); overflow: hidden; }
-  .gal-progress span { display: block; height: 100%; width: 20%; border-radius: 3px; background: var(--gold); transition: transform .15s linear; transform-origin: left; }
-  @media (min-width: 760px) {
-    .gal-track { padding: 16px max(48px, calc(50% - 560px)) 26px; scroll-padding: 0 max(48px, calc(50% - 560px)); gap: 22px; }
-    .gal-item { flex-basis: 250px; scroll-snap-align: start; }
-    .gal-nav { display: grid; }
-  }
-
-  /* Lightbox: frosted glass over the page, the whole photo uncropped */
-  .lightbox { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 64px 16px;
-    background: rgba(36,10,18,.72); -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
-    opacity: 0; transition: opacity .3s ease; }
-  .lightbox.open { opacity: 1; }
-  .lightbox img { max-width: min(92vw, 1000px); max-height: calc(100svh - 150px); width: auto; height: auto; border-radius: 16px;
-    box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(232,198,119,.35); transform: scale(.97); transition: transform .3s ease; }
-  .lightbox.open img { transform: none; }
   /* Background music: a small glass button, top right, above the envelope too. */
   .music-btn { position: fixed; z-index: 95; top: calc(14px + env(safe-area-inset-top)); right: 14px; width: 44px; height: 44px;
     border-radius: 50%; display: grid; place-items: center; cursor: pointer; color: var(--maroon);
@@ -295,21 +249,6 @@
   @keyframes wave { 50% { opacity: .35; } }
   .lite .music-btn { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255,251,244,.96); }
   @media (min-width: 760px) { .music-btn { top: 20px; right: 22px; } }
-  .lb-btn { position: absolute; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
-    color: #FFF4E0; border: 1px solid rgba(255,255,255,.35);
-    background: linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.08));
-    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
-  .lb-btn svg { width: 22px; height: 22px; }
-  .lb-close { top: max(16px, env(safe-area-inset-top)); right: 16px; }
-  .lb-prev { left: 14px; top: 50%; margin-top: -24px; }
-  .lb-next { right: 14px; top: 50%; margin-top: -24px; }
-  .lb-next svg { transform: scaleX(-1); }
-  .lb-count { position: absolute; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
-    padding: 8px 16px; border-radius: 999px; font: 600 12px var(--sans); letter-spacing: .16em; color: #FFF4E0;
-    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-  @media (max-width: 759px) { .lb-prev, .lb-next { top: auto; bottom: max(14px, env(safe-area-inset-bottom)); margin-top: 0; } .lb-prev { left: 18px; } .lb-next { right: 18px; } }
-  .lite .lightbox { background: rgba(36,10,18,.94); -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .lite .gal-nav, .lite .lb-btn, .lite .lb-count { -webkit-backdrop-filter: none; backdrop-filter: none; }
 
   /* ---------- Performance ---------- */
   /* Animations pause while their section is off-screen. */
@@ -1134,23 +1073,6 @@
   </section>
 
   <!-- ============ Footer ============ -->
-  <!-- ============ Gallery ============ -->
-  <section class="section gallery" data-screen-label="Gallery" id="gallery">
-    <h2 class="h2 reveal">A few favourite moments</h2>
-    <svg class="orn reveal" aria-hidden="true"><use href="#orn" /></svg>
-    <div class="gal-wrap reveal">
-      <button type="button" class="gal-nav prev" aria-label="Previous photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
-      <ul class="gal-track" id="gal-track" data-full="r1,r2,r3,r4">
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="0" aria-label="Open photo 1 of 4"><img src="assets/gallery/t-r1.jpg" alt="Arunav and Shambhavi at their roka, photo 1" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="1" aria-label="Open photo 2 of 4"><img src="assets/gallery/t-r2.jpg" alt="Arunav and Shambhavi at their roka, photo 2" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="2" aria-label="Open photo 3 of 4"><img src="assets/gallery/t-r3.jpg" alt="Arunav and Shambhavi at their roka, photo 3" loading="lazy" decoding="async" /></button></li>
-        <li class="gal-item"><button type="button" class="gal-frame" data-i="3" aria-label="Open photo 4 of 4"><img src="assets/gallery/t-r4.jpg" alt="Arunav and Shambhavi at their roka, photo 4" loading="lazy" decoding="async" /></button></li>
-      </ul>
-      <button type="button" class="gal-nav next" aria-label="Next photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
-    </div>
-    <div class="gal-progress" aria-hidden="true"><span id="gal-bar"></span></div>
-  </section>
-
   <footer data-screen-label="Footer">
     <svg class="toran" aria-hidden="true">
       <rect width="100%" height="74" fill="url(#toranP)" />
@@ -1163,14 +1085,6 @@
     <div class="footer-pad" aria-hidden="true"></div>
   </footer>
 </main>
-
-<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
-  <img id="lb-img" alt="" />
-  <button type="button" class="lb-btn lb-close" id="lb-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
-  <button type="button" class="lb-btn lb-prev" id="lb-prev" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
-  <button type="button" class="lb-btn lb-next" id="lb-next" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
-  <div class="lb-count" id="lb-count"></div>
-</div>
 
 <nav class="section-nav" id="section-nav" aria-label="Sections">
   <span class="lens" aria-hidden="true"></span>
@@ -1186,6 +1100,6 @@
   <svg class="ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6"/><path class="wave" d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
   <svg class="ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path d="M16 9.5l5 5m0-5l-5 5"/></svg>
 </button>
-<script src="app.js?v=000a736f"></script>
+<script src="app.js?v=cb4c167d"></script>
 </body>
 </html>

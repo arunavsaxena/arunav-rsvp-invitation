@@ -9,13 +9,12 @@ wide it switches to a full-width layout with a two-column hero and event grid.
 
 ```
 index.html       Markup and styles
-app.js           Behaviour: landing, music, countdown, gallery, RSVP form and uploads
+app.js           Behaviour: landing, music, countdown, RSVP form and uploads
 apps-script/     Code.gs, the RSVP backend (Google Apps Script), shared with the bride's site
 assets/          couple.jpg (hero arch), evara-logo.jpeg, og.jpg (share preview),
                  om-mangalam.mp3 (background music)
 assets/landing/  Landing artwork (scene and garden), shared with save-the-date
 assets/events/   One painted scene per event card
-assets/gallery/  Gallery photographs: r1 to r4, with t-r1 to t-r4 thumbnails
 CNAME            Custom domain for GitHub Pages
 ```
 
@@ -23,7 +22,7 @@ CNAME            Custom domain for GitHub Pages
 
 Landing, hero (toran, ॥ श्री गणेशाय नमः ॥, couple in an arch), invitation
 wording, आत्मीय निवेदन (Maa's note in Hindi with an English toggle), venue, the four
-events, countdown, RSVP, who to call, gallery, footer.
+events, countdown, RSVP, who to call, footer.
 
 ## After editing app.js
 
@@ -56,11 +55,6 @@ v=$(shasum app.js | cut -c1-8); sed -i '' "s#app.js?v=[a-f0-9]*#app.js?v=$v#" in
   scroll (hero photo, event scenes, rangoli, textures). All of it is skipped for
   `prefers-reduced-motion`, and the heavier glass and lanterns are trimmed in lite
   mode (Data Saver or very low-memory phones). Off-screen animations pause.
-- **Gallery.** Photographs are listed in `data-full` on `#gal-track` in
-  `index.html`, one `<li>` per photo. Each has a full-size file (`r1.jpg`, about
-  1400px on the long side, used in the lightbox) and a 3:4 thumbnail
-  (`t-r1.jpg`, cropped so the couple sits in the middle of the arch). Strip
-  camera metadata before adding photos: the repo is public.
 - **Add to calendar** downloads one `.ics` with all four events (times in IST,
   stored as UTC). Edit `icsFile()` in `app.js` if timings change.
 - After replying, guests see a summary of what they sent. If they open the form
