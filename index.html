@@ -396,9 +396,21 @@
   .venue img.logo { width: min(230px, 62vw); height: auto; margin: 26px auto 22px; mix-blend-mode: multiply; }
   .venue h3 { font: 500 clamp(26px, 6.5vw, 34px) var(--serif); margin: 0; color: var(--ink); }
   .venue .addr { font: 500 18px/1.8 var(--serif); color: #4E3E34; margin: 12px 0 18px; }
-  .link-maps { display: inline-block; border-bottom: 1px solid rgba(122,31,43,.4); padding-bottom: 3px; color: var(--maroon);
-    font: 600 12px var(--sans); letter-spacing: .2em; text-transform: uppercase; transition: color .2s, border-color .2s; }
-  .link-maps:hover { color: var(--gold); border-bottom-color: var(--gold); }
+  /* Directions: a glass pill like the hero's "Add to calendar", with a pin and an outward arrow. */
+  .link-maps { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 12px 20px 12px 16px; border-radius: 999px;
+    color: var(--maroon); font: 600 12px var(--sans); letter-spacing: .18em; text-transform: uppercase; text-decoration: none;
+    background: linear-gradient(160deg, rgba(255,255,255,.8), rgba(255,250,240,.5));
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%);
+    border: 1px solid rgba(255,255,255,.85);
+    box-shadow: 0 8px 20px rgba(74,15,26,.12), inset 0 1px 0 #fff, inset 0 0 0 1px rgba(122,31,43,.2);
+    transition: transform .2s, box-shadow .2s, background .2s; }
+  .link-maps svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .link-maps .go { width: 14px; height: 14px; opacity: .7; transition: transform .2s; }
+  .link-maps:hover { transform: translateY(-2px); background: linear-gradient(160deg, rgba(255,255,255,.95), rgba(255,250,240,.65));
+    box-shadow: 0 12px 26px rgba(74,15,26,.16), inset 0 1px 0 #fff, inset 0 0 0 1px rgba(122,31,43,.3); }
+  .link-maps:hover .go { transform: translate(2px, -2px); }
+  .link-maps:focus-visible { outline: 2px solid var(--maroon); outline-offset: 3px; }
+  .lite .link-maps { -webkit-backdrop-filter: none; backdrop-filter: none; background: #FFFBF2; }
   .venue { padding-bottom: 120px; }
 
   /* ---------- Events ---------- */
@@ -878,7 +890,7 @@
     <img class="logo reveal" src="assets/evara-logo.jpeg" alt="Evara Spa and Resort" />
     <h3 class="reveal">Evara Resort &amp; Spa</h3>
     <p class="addr reveal">Village Bhalon, Patkote, Ramnagar<br />Jim Corbett, Uttarakhand 263159</p>
-    <a class="link-maps reveal" href="https://www.google.com/maps/search/?api=1&amp;query=Evara%20Resort%20and%20Spa%20Jim%20Corbett%20Uttarakhand" target="_blank" rel="noopener">Get directions on Google Maps</a>
+    <a class="link-maps reveal" href="https://www.google.com/maps/search/?api=1&amp;query=Evara%20Resort%20and%20Spa%20Jim%20Corbett%20Uttarakhand" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg><span>Open in Google Maps</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
   </section>
 
   <!-- ============ Events ============ -->
