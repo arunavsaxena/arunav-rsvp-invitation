@@ -83,7 +83,7 @@ All of these are at the top of `app.js`:
 
 Every field is required except the ID proofs. A guest who declines gives only name and phone. A guest
 who attends also gives the guest count, arrival and departure (road or train, date,
-time, and for train travel whether they need a pickup from or drop at the station, and if so which station and train), whether a driver is coming, and **an optional ID proof per guest** (Aadhaar, driving
+time, and for train travel whether they need a pickup from or drop at Kathgodam station, with an optional train number), whether a driver is coming, and **an optional ID proof per guest** (Aadhaar, driving
 licence or passport, as a photo or PDF up to 5 MB). Phone photos are shrunk to a
 1800px JPEG in the browser before upload.
 
@@ -223,7 +223,7 @@ to the public `arunavsaxena.github.io` repo.
 - [x] Invite key created; share the `?k=…` link, not the bare domain
 - [x] Backend deployed
 - [x] Phone numbers for Sunil and Sarita in the `CONTACTS` Script Property
-- [ ] Add Vedika's number to `CONTACTS`
+- [ ] Add the RSVP co-ordinator's number to `CONTACTS` (listed first, no name)
 - [ ] Send one real reply through the invite link and confirm the row lands in
       **Invitation RSVPs**, then delete it
 - [ ] Listen to the page once on a phone, to check the music starts and mutes

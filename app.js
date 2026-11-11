@@ -10,9 +10,9 @@
   // file; the backend sends them (Script Property CONTACTS) only when the page
   // was opened with a valid invite key.
   var CONTACTS = [
+    { name: "RSVP co-ordinator", role: "", phone: "" },
     { name: "Sunil Kumar Saxena", role: "Groom’s father", phone: "" },
-    { name: "Sarita Saxena", role: "Groom’s mother", phone: "" },
-    { name: "Vedika", role: "RSVP co-ordinator", phone: "" }
+    { name: "Sarita Saxena", role: "Groom’s mother", phone: "" }
   ];
 
   // RSVPs and ID proofs go to the Google Apps Script web app in
@@ -365,9 +365,9 @@
     var loc = "Evara Resort & Spa\\, Village Bhalon\\, Patkote\\, Ramnagar\\, Jim Corbett\\, Uttarakhand 263159";
     var events = [
       ["carnival", "Carnival Lunch · Arunav & Shambhavi", "20270127T073000Z", "20270127T103000Z", "Lunch\\, hi-tea by the pool\\, mehendi and carnival games. Restaurant & Pool Lawn."],
-      ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Tilak\\, lagan\\, godh bharai and the ring ceremony\\, followed by a cocktail sangeet. Banquet Hall & Small Lawn."],
+      ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Cocktails\\, dinner and sangeet: an evening of music and dancing. Banquet Hall & Small Lawn."],
       ["shaadi", "Shaadi · Arunav & Shambhavi", "20270128T043000Z", "20270128T120000Z", "Baraat\\, varmala and phere. Big Lawn & Poolside."],
-      ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Our first dance\\, performances by friends and dinner. Big Lawn & Banquet Hall."]
+      ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Dinner\\, music and one more evening of celebration together. Big Lawn & Banquet Hall."]
     ];
     var stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
     var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arunav and Shambhavi//Wedding//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
@@ -415,7 +415,7 @@
       var digits = (p.phone || "").replace(/[^\d+]/g, "");
       var acts = digits ? '<div class="acts"><a class="ic" href="tel:' + esc(digits) + '" aria-label="Call ' + esc(p.name) + '">' + phoneIcon + '</a>' +
         '<a class="ic" href="https://wa.me/' + esc(digits.replace(/^\+/, "")) + '" target="_blank" rel="noopener" aria-label="WhatsApp ' + esc(p.name) + '">' + waIcon + '</a></div>' : "";
-      return '<div class="person"><div><div class="pn">' + esc(p.name) + '</div><div class="pr">' + esc(p.role) + '</div>' +
+      return '<div class="person"><div><div class="pn">' + esc(p.name) + '</div>' + (p.role ? '<div class="pr">' + esc(p.role) + '</div>' : "") +
         (p.phone ? '<div class="ph">' + esc(p.phone) + '</div>' : "") + '</div>' + acts + '</div>';
     }).join("") + (note ? '<p class="contacts-note">' + esc(note) + '</p>' : "");
     };
@@ -627,10 +627,6 @@
       ["departBy", "Please tell us whether you are leaving by road or train.", form.querySelector('input[name="departBy"]')],
       ["departTime", "Please add your departure time.", document.getElementById("rsvp-depart-time")],
       ["drop", "Please tell us whether you need a drop at the railway station.", form.querySelector('input[name="drop"]'), function () { return fd.get("departBy") === "Train"; }],
-      ["pickupStation", "Please tell us which station to pick you up from.", document.getElementById("rsvp-pickup-station"), function () { return fd.get("arriveBy") === "Train" && fd.get("pickup") === "Yes"; }],
-      ["pickupTrain", "Please add the train you are arriving on.", document.getElementById("rsvp-pickup-train"), function () { return fd.get("arriveBy") === "Train" && fd.get("pickup") === "Yes"; }],
-      ["dropStation", "Please tell us which station to drop you at.", document.getElementById("rsvp-drop-station"), function () { return fd.get("departBy") === "Train" && fd.get("drop") === "Yes"; }],
-      ["dropTrain", "Please add the train you are leaving on.", document.getElementById("rsvp-drop-train"), function () { return fd.get("departBy") === "Train" && fd.get("drop") === "Yes"; }],
       ["driver", "Please tell us whether a driver is travelling with you.", form.querySelector('input[name="driver"]')]
     ];
     for (var c = 0; c < checks.length; c++) {
@@ -640,9 +636,7 @@
     data.arriveBy = fd.get("arriveBy"); data.arriveDate = fd.get("arriveDate"); data.arriveTime = fd.get("arriveTime");
     data.pickup = data.arriveBy === "Train" ? fd.get("pickup") : "";
     data.drop = fd.get("departBy") === "Train" ? fd.get("drop") : "";
-    data.pickupStation = data.pickup === "Yes" ? fd.get("pickupStation").trim() : "";
     data.pickupTrain = data.pickup === "Yes" ? fd.get("pickupTrain").trim() : "";
-    data.dropStation = data.drop === "Yes" ? fd.get("dropStation").trim() : "";
     data.dropTrain = data.drop === "Yes" ? fd.get("dropTrain").trim() : "";
     data.departBy = fd.get("departBy"); data.departDate = fd.get("departDate"); data.departTime = fd.get("departTime");
     data.driver = fd.get("driver");
@@ -728,9 +722,9 @@
     if (going) {
       li("Guests:", d.guests + (d.guests === "1" ? " person" : " people"));
       li("Arriving:", d.arriveDate + ", " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
-      if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? d.pickupStation + ", " + d.pickupTrain : "No, thanks");
+      if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? "Yes" + (d.pickupTrain ? ", train " + d.pickupTrain : "") : "No, thanks");
       li("Leaving:", d.departDate + ", " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
-      if (d.drop) li("Station drop:", d.drop === "Yes" ? d.dropStation + ", " + d.dropTrain : "No, thanks");
+      if (d.drop) li("Station drop:", d.drop === "Yes" ? "Yes" + (d.dropTrain ? ", train " + d.dropTrain : "") : "No, thanks");
       li("Driver:", d.driver);
       var up = got.guests.filter(function (g) { return g.file; }).length;
       li("ID proofs:", up === got.guests.length ? "all " + up + " uploaded" : up + " of " + got.guests.length + " uploaded");
