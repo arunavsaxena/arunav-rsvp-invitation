@@ -367,7 +367,7 @@
       ["carnival", "Carnival Lunch · Arunav & Shambhavi", "20270127T073000Z", "20270127T103000Z", "Lunch\\, hi-tea by the pool\\, mehendi and carnival games. Restaurant & Poolside."],
       ["engagement", "Engagement · Arunav & Shambhavi", "20270127T123000Z", "20270127T173000Z", "Cocktails\\, dinner and sangeet: an evening of music and dancing. Banquet Hall & Rock Garden."],
       ["shaadi", "Shaadi · Arunav & Shambhavi", "20270128T043000Z", "20270128T120000Z", "Baraat\\, varmala and phere. Wedding Lawn 1 & Poolside."],
-      ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Dinner\\, music and one more evening of celebration together. Wedding Lawn 2 & Poolside."]
+      ["reception", "Reception · Arunav & Shambhavi", "20270128T143000Z", "20270128T180000Z", "Dinner\\, music and one more evening of celebration together. Banquet Hall & Wedding Lawn 2."]
     ];
     var stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
     var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Arunav and Shambhavi//Wedding//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
