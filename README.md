@@ -8,18 +8,22 @@ wide it switches to a full-width layout with a two-column hero and event grid.
 ## Structure
 
 ```
-index.html   Markup and styles
-app.js       Behaviour: envelope, countdown, RSVP form and uploads
-apps-script/ Code.gs, the RSVP backend (Google Apps Script)
-assets/      couple.jpg (hero arch), evara-logo.jpeg, og.jpg (share preview)
-CNAME        Custom domain for GitHub Pages
+index.html       Markup and styles
+app.js           Behaviour: landing, music, countdown, gallery, RSVP form and uploads
+apps-script/     Code.gs, the RSVP backend (Google Apps Script), shared with the bride's site
+assets/          couple.jpg (hero arch), evara-logo.jpeg, og.jpg (share preview),
+                 om-mangalam.mp3 (background music)
+assets/landing/  Landing artwork (scene and garden), shared with save-the-date
+assets/events/   One painted scene per event card
+assets/gallery/  Gallery photographs: r1 to r4, with t-r1 to t-r4 thumbnails
+CNAME            Custom domain for GitHub Pages
 ```
 
 ## Sections
 
-Envelope with seal, hero (toran, ॥ श्री गणेशाय नमः ॥, couple in an arch), invitation
+Landing, hero (toran, ॥ श्री गणेशाय नमः ॥, couple in an arch), invitation
 wording, आत्मीय निवेदन (Maa's note in Hindi with an English toggle), venue, the four
-events, countdown, RSVP, who to call, footer.
+events, countdown, RSVP, who to call, gallery, footer.
 
 ## After editing app.js
 
@@ -32,8 +36,31 @@ v=$(shasum app.js | cut -c1-8); sed -i '' "s#app.js?v=[a-f0-9]*#app.js?v=$v#" in
 
 ## Guest experience notes
 
-- The envelope plays once per browser session and is skipped for deep links
-  (`.../?k=...#rsvp`), so reloads and "jump to RSVP" links go straight in.
+- **Landing screen.** The same scene as the bride's site: a watercolour of the
+  resort at golden hour behind, the garden and its brass lanterns in front, sky
+  lanterns drifting between, and the invitation on a frosted-glass cusped arch in
+  the middle, drifting a little with the pointer. Every layer bleeds past the
+  screen so no edge shows. On tall, narrow screens the garden splits into two
+  larger corner pieces. Artwork lives in `assets/landing/` and is shared with
+  `save-the-date`. A tap on the arch (or Enter, Space or Escape) lifts it away,
+  and scroll is locked until then. It plays once per browser session and is
+  skipped for deep links (`.../?k=...#rsvp`), so reloads and "jump to RSVP" links
+  go straight in.
+- **Music.** `assets/om-mangalam.mp3` (Om Mangalam Bhagwan Vishnu, trimmed to 37
+  seconds of sound so the loop has no gap), looped. Browsers only allow sound
+  after a tap or key press, so it starts on the first one, usually opening the
+  landing, and fades in. A glass button at the top right mutes it; the choice is
+  remembered on the device (`localStorage` `sa-music-muted`). It pauses while the
+  tab is hidden. The page's Content Security Policy needs `media-src 'self'` for it.
+- **Motion.** Sections reveal as they arrive, and a few layers drift against the
+  scroll (hero photo, event scenes, rangoli, textures). All of it is skipped for
+  `prefers-reduced-motion`, and the heavier glass and lanterns are trimmed in lite
+  mode (Data Saver or very low-memory phones). Off-screen animations pause.
+- **Gallery.** Photographs are listed in `data-full` on `#gal-track` in
+  `index.html`, one `<li>` per photo. Each has a full-size file (`r1.jpg`, about
+  1400px on the long side, used in the lightbox) and a 3:4 thumbnail
+  (`t-r1.jpg`, cropped so the couple sits in the middle of the arch). Strip
+  camera metadata before adding photos: the repo is public.
 - **Add to calendar** downloads one `.ics` with all four events (times in IST,
   stored as UTC). Edit `icsFile()` in `app.js` if timings change.
 - After replying, guests see a summary of what they sent. If they open the form
@@ -83,12 +110,14 @@ A public RSVP form must accept anonymous guests, so it cannot be hidden. Instead
   (`no-referrer`).
 - **Strict server-side checks.** Every field is validated against fixed choices.
   Files are checked by their actual bytes (JPEG, PNG, WebP, HEIC or PDF), at most
-  6 MB, one per guest and 10 per reply. A reply with missing IDs is refused.
+  6 MB, one per guest and 10 per reply. ID proofs are optional: a reply with
+  none is still saved, but every file that was sent must have arrived.
 - **Abuse limits.** At most 80 files and 40 replies per 10 minutes, and 600 files
   and 300 replies per day. There is a hidden bot-trap field, and cell values are
   escaped so they cannot run as spreadsheet formulas.
-- **Locked-down page.** A Content Security Policy lets only `app.js` run and only
-  lets it talk to `script.google.com`.
+- **Locked-down page.** A Content Security Policy lets only `app.js` run, only
+  lets it talk to `script.google.com`, and only loads images and audio from the
+  site itself.
 
 **If the invite link leaks:** open the Apps Script project, run `rotateInviteKey`,
 copy the new link from the execution log, and send it to guests. The old link stops
@@ -191,6 +220,12 @@ to the public `arunavsaxena.github.io` repo.
 
 ## Before sharing with guests
 
-- [ ] Add phone numbers in `CONTACTS`
-- [ ] Share the invite link that has `?k=`, not the bare domain
+- [x] Invite key created; share the `?k=…` link, not the bare domain
+- [x] Backend deployed
+- [x] Phone numbers for Sunil and Sarita in the `CONTACTS` Script Property
+- [ ] Add Vedika's number to `CONTACTS`
+- [ ] Send one real reply through the invite link and confirm the row lands in
+      **Invitation RSVPs**, then delete it
+- [ ] Listen to the page once on a phone, to check the music starts and mutes
+- [ ] Confirm the Google Maps link points at the right Evara property
 - [ ] Confirm the Engagement start time: the itinerary says "6:00 / 7:00 PM"; the page shows 6:00 PM
