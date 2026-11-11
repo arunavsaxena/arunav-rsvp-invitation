@@ -454,7 +454,7 @@
     row.className = "trip guest-id";
     row.innerHTML =
       '<div class="g-title">Guest ' + (i + 1) + (i === 0 ? ' <span class="opt" style="font:400 14px var(--sans);color:var(--faint)">(you)</span>' : '') + '</div>' +
-      '<div class="fld-wrap"><label class="sublbl" for="gid-name-' + i + '">Full name</label>' +
+      '<div class="fld-wrap"><label class="sublbl" for="gid-name-' + i + '">Full name <span class="opt">(optional)</span></label>' +
       '<input class="fld" id="gid-name-' + i + '" data-role="g-name" autocomplete="off" /></div>' +
       '<div class="fld-wrap"><label class="sublbl" for="gid-type-' + i + '">ID type</label>' +
       '<select class="fld" id="gid-type-' + i + '" data-role="g-type"><option value="">Select</option>' +
@@ -622,24 +622,19 @@
     data.guests = String(+guestSel.value || 1);
     var checks = [
       ["arriveBy", "Please tell us whether you are arriving by road or train.", form.querySelector('input[name="arriveBy"]')],
-      ["arriveTime", "Please add your arrival time.", document.getElementById("rsvp-arrive-time")],
-      ["pickup", "Please tell us whether you need a pickup from the railway station.", form.querySelector('input[name="pickup"]'), function () { return fd.get("arriveBy") === "Train"; }],
       ["departBy", "Please tell us whether you are leaving by road or train.", form.querySelector('input[name="departBy"]')],
-      ["departTime", "Please add your departure time.", document.getElementById("rsvp-depart-time")],
-      ["drop", "Please tell us whether you need a drop at the railway station.", form.querySelector('input[name="drop"]'), function () { return fd.get("departBy") === "Train"; }],
-      ["driver", "Please tell us whether a driver is travelling with you.", form.querySelector('input[name="driver"]')]
     ];
     for (var c = 0; c < checks.length; c++) {
       if (checks[c][3] && !checks[c][3]()) continue;
       if (!String(fd.get(checks[c][0]) || "").trim()) return invalid(checks[c][1], checks[c][2]);
     }
     data.arriveBy = fd.get("arriveBy"); data.arriveDate = fd.get("arriveDate"); data.arriveTime = fd.get("arriveTime");
-    data.pickup = data.arriveBy === "Train" ? fd.get("pickup") : "";
-    data.drop = fd.get("departBy") === "Train" ? fd.get("drop") : "";
+    data.pickup = data.arriveBy === "Train" ? (fd.get("pickup") || "") : "";
+    data.drop = fd.get("departBy") === "Train" ? (fd.get("drop") || "") : "";
     data.pickupTrain = data.pickup === "Yes" ? fd.get("pickupTrain").trim() : "";
     data.dropTrain = data.drop === "Yes" ? fd.get("dropTrain").trim() : "";
     data.departBy = fd.get("departBy"); data.departDate = fd.get("departDate"); data.departTime = fd.get("departTime");
-    data.driver = fd.get("driver");
+    data.driver = fd.get("driver") || "";
 
     var guests = [];
     var rows = idsHost.querySelectorAll(".guest-id");
@@ -648,10 +643,10 @@
       var tp = rows[i].querySelector('[data-role="g-type"]');
       var fl = rows[i].querySelector('[data-role="g-file"]');
       var label = "guest " + (i + 1);
-      if (!nm.value.trim()) return invalid("Please add the full name of " + label + ".", nm);
+      var gname = nm.value.trim() || "Guest " + (i + 1);
       // ID proofs are optional: an RSVP without them is better than no RSVP.
       var f = fl.files[0];
-      if (!f) { guests.push({ name: nm.value.trim(), idType: "", file: null }); continue; }
+      if (!f) { guests.push({ name: gname, idType: "", file: null }); continue; }
       if (ID_TYPES.indexOf(tp.value) === -1) return invalid("Please choose the ID type for " + label + ".", tp);
       var t = fileType(f);
       if (OK_TYPES.indexOf(t) === -1) return invalid("The ID for " + label + " must be a photo or a PDF.", fl);
@@ -659,7 +654,7 @@
       if (f.size > cap) {
         return invalid("The ID for " + label + " is too large. Please use a file under 5 MB.", fl);
       }
-      guests.push({ name: nm.value.trim(), idType: tp.value, file: f });
+      guests.push({ name: gname, idType: tp.value, file: f });
     }
     return { data: data, guests: guests };
   }
@@ -721,11 +716,11 @@
     function li(label, text) { var n = document.createElement("li"); var b = document.createElement("b"); b.textContent = label + " "; n.appendChild(b); n.appendChild(document.createTextNode(text)); sum.appendChild(n); }
     if (going) {
       li("Guests:", d.guests + (d.guests === "1" ? " person" : " people"));
-      li("Arriving:", d.arriveDate + " 2027, " + fmtTime(d.arriveTime) + " by " + d.arriveBy.toLowerCase());
+      li("Arriving:", d.arriveDate + " 2027" + (d.arriveTime ? ", " + fmtTime(d.arriveTime) : "") + " by " + d.arriveBy.toLowerCase());
       if (d.pickup) li("Station pickup:", d.pickup === "Yes" ? "Yes" + (d.pickupTrain ? ", train " + d.pickupTrain : "") : "No, thanks");
-      li("Leaving:", d.departDate + " 2027, " + fmtTime(d.departTime) + " by " + d.departBy.toLowerCase());
+      li("Leaving:", d.departDate + " 2027" + (d.departTime ? ", " + fmtTime(d.departTime) : "") + " by " + d.departBy.toLowerCase());
       if (d.drop) li("Station drop:", d.drop === "Yes" ? "Yes" + (d.dropTrain ? ", train " + d.dropTrain : "") : "No, thanks");
-      li("Driver:", d.driver);
+      if (d.driver) li("Driver:", d.driver);
       var up = got.guests.filter(function (g) { return g.file; }).length;
       li("ID proofs:", up === got.guests.length ? "all " + up + " uploaded" : up + " of " + got.guests.length + " uploaded");
     }

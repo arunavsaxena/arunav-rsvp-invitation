@@ -81,9 +81,11 @@ All of these are at the top of `app.js`:
 
 ## RSVPs and ID proofs
 
-Every field is required except the ID proofs. A guest who declines gives only name and phone. A guest
-who attends also gives the guest count, arrival and departure (road or train, date,
-time, and for train travel whether they need a pickup from or drop at Kathgodam station, with an optional train number), whether a driver is coming, and **an optional ID proof per guest** (Aadhaar, driving
+Only these are required: whether they are coming, name and phone, and for guests who
+attend, the guest count and how they arrive and leave (road or train). Everything else
+is optional and kept when given: dates and times, a Kathgodam station pickup or drop
+with a train number, whether a driver is coming, each guest's name (stored as "Guest 2"
+and so on when blank), and **an ID proof per guest** (Aadhaar, driving
 licence or passport, as a photo or PDF up to 5 MB). Phone photos are shrunk to a
 1800px JPEG in the browser before upload.
 
