@@ -202,17 +202,19 @@ function saveRsvp_(b) {
     if (!(guests >= 1 && guests <= MAX_GUESTS && Math.floor(guests) === guests)) throw new Reject('Please choose the number of guests.');
     oneOf_(b.arriveBy, MODES, 'arrival mode');
     oneOf_(b.arriveDate, ARRIVE_DATES, 'arrival date');
-    time_(b.arriveTime, 'arrival time');
+    // Only attendance, name, phone, guest count and travel mode are required;
+    // times, driver and guest names are kept when sent.
+    if (b.arriveTime) time_(b.arriveTime, 'arrival time');
     // Station pickup is asked only for train arrivals; pages opened before
     // the question existed do not send it, so a blank answer is kept blank.
     var pickup = '';
     if (b.arriveBy === 'Train' && b.pickup) { oneOf_(b.pickup, ['Yes', 'No'], 'pickup answer'); pickup = stationTrip_(b.pickup, b.pickupStation, b.pickupTrain); }
     oneOf_(b.departBy, MODES, 'departure mode');
     oneOf_(b.departDate, DEPART_DATES, 'departure date');
-    time_(b.departTime, 'departure time');
+    if (b.departTime) time_(b.departTime, 'departure time');
     var drop = '';
     if (b.departBy === 'Train' && b.drop) { oneOf_(b.drop, ['Yes', 'No'], 'drop answer'); drop = stationTrip_(b.drop, b.dropStation, b.dropTrain); }
-    oneOf_(b.driver, ['Yes', 'No'], 'driver answer');
+    if (b.driver) oneOf_(b.driver, ['Yes', 'No'], 'driver answer');
     if (!Array.isArray(b.ids) || b.ids.length !== guests) throw new Reject('Please add the name of every guest.');
     // ID proofs are optional. A guest marked file:false sent none; older pages
     // omit the flag and always sent one.
@@ -221,7 +223,7 @@ function saveRsvp_(b) {
       if (!g || typeof g !== 'object') throw new Reject('Please add the name of every guest.');
       var hasId = g.file !== false;
       if (hasId) { oneOf_(g.idType, ID_TYPES, 'ID type'); expected++; }
-      return (i + 1) + '. ' + text_(g.name, 80, 'guest name') + ' (' + (hasId ? g.idType : 'no ID yet') + ')';
+      return (i + 1) + '. ' + (clean_(g.name, 80) || 'Guest ' + (i + 1)) + ' (' + (hasId ? g.idType : 'no ID yet') + ')';
     }).join('\n');
 
     var folder = expected ? submissionFolder_(b.submissionId, name, false) : null;
@@ -273,16 +275,19 @@ function saveBrideRsvp_(b) {
 
   oneOf_(b.travelBy, BRIDE_MODES, 'mode of transport');
   oneOf_(b.arriveDate, BRIDE_ARRIVE_DATES, 'arrival date');
-  time_(b.arriveTime, 'arrival time');
+  // Her form asks for name, phone, transport, guests and arrival date, and
+  // nothing else. Anything further is kept when it is sent and never required.
+  var arriveTime = clean_(b.arriveTime, 5);
+  if (arriveTime) time_(arriveTime, 'arrival time');
 
   var assistance = subset_(b.assistance, BRIDE_ASSISTANCE, 'assistance needed');
   var station = '', train = '', medical = '';
   if (assistance.indexOf('Pick-up required at railway station') !== -1) {
-    station = text_(b.pickupStation, 80, 'station');
+    station = clean_(b.pickupStation, 80);
     train = clean_(b.pickupTrain, 80);
   }
   if (assistance.indexOf('Special medical care') !== -1) {
-    medical = text_(b.medicalNote, 400, 'medical note');
+    medical = clean_(b.medicalNote, 400);
   }
 
   // ID proofs are optional here: whatever reached Drive is recorded, and a
@@ -306,7 +311,7 @@ function saveBrideRsvp_(b) {
 
   var values = [
     name, phone, String(guests), days.join(', '),
-    b.travelBy, b.arriveDate, b.arriveTime,
+    b.travelBy, b.arriveDate, arriveTime,
     assistance.join(', '), station, train, medical,
     list, String(uploaded), folderUrl, b.submissionId
   ].map(cell_);
