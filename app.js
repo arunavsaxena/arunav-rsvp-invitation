@@ -722,7 +722,8 @@
       if (d.drop) li("Station drop:", d.drop === "Yes" ? "Yes" + (d.dropTrain ? ", train " + d.dropTrain : "") : "No, thanks");
       if (d.driver) li("Driver:", d.driver);
       var up = got.guests.filter(function (g) { return g.file; }).length;
-      li("ID proofs:", up === got.guests.length ? "all " + up + " uploaded" : up + " of " + got.guests.length + " uploaded");
+      var total = got.guests.length;
+      li("ID proofs:", up === 0 ? "none uploaded" : up === total ? (total === 1 ? "uploaded" : "all " + total + " uploaded") : up + " of " + total + " uploaded");
     }
     showPrevNote();
     form.hidden = true;
