@@ -219,7 +219,7 @@ to the public `arunavsaxena.github.io` repo.
 - [x] Invite key created; share the `?k=…` link, not the bare domain
 - [x] Backend deployed
 - [x] Phone numbers for Sunil and Sarita in the `CONTACTS` Script Property
-- [ ] Add the RSVP co-ordinator's number to `CONTACTS` (listed first, no name)
+- [x] RSVP Co-ordinator's number in `CONTACTS` (listed first, no name)
 - [ ] Send one real reply through the invite link and confirm the row lands in
       **Invitation RSVPs**, then delete it
 - [ ] Listen to the page once on a phone, to check the music starts and mutes

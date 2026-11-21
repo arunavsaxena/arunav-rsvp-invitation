@@ -10,7 +10,7 @@
   // file; the backend sends them (Script Property CONTACTS) only when the page
   // was opened with a valid invite key.
   var CONTACTS = [
-    { name: "RSVP co-ordinator", role: "", phone: "" },
+    { name: "RSVP Co-ordinator", role: "", phone: "" },
     { name: "Sunil Kumar Saxena", role: "Groom’s father", phone: "" },
     { name: "Sarita Saxena", role: "Groom’s mother", phone: "" }
   ];
