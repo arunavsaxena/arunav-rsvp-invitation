@@ -616,7 +616,15 @@
     var going = attending();
     var data = { name: (fd.get("name") || "").trim(), phone: (fd.get("phone") || "").trim(), attending: going ? "Yes" : "No" };
     if (!data.name) return invalid("Please tell us your name.", nameInput);
-    if (data.phone.replace(/\D/g, "").length < 10) return invalid("Please add a phone number we can reach you on.", phoneInput);
+    // Same rule as the backend (10 to 15 digits; only digits, spaces, + ( ) -), applied
+    // before any ID uploads. Harmless extras people type are tidied rather than refused:
+    // "98765.43210", "98765/43210", "+91 98765 43210 (Papa)".
+    var phone = data.phone.replace(/\([^)]*[A-Za-z][^)]*\)/g, " ").replace(/[^+\d\s()\-]/g, " ").replace(/\s+/g, " ").trim();
+    var digits = phone.replace(/\D/g, "");
+    if (digits.length > 15) return invalid("Please add just one phone number.", phoneInput);
+    if (digits.length < 10) return invalid("Please add a phone number we can reach you on.", phoneInput);
+    if (phone.length > 20) phone = (phone.charAt(0) === "+" ? "+" : "") + digits;
+    data.phone = phone;
     if (!going) return { data: data, guests: [] };
 
     data.guests = String(+guestSel.value || 1);
