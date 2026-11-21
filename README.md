@@ -165,6 +165,11 @@ RSVPs down as well as yours. Every change goes out like this.
    fixed list (dates, modes, yes/no answers, ID types) must be plain ASCII on
    both sides. A middle dot does not survive the POST into Apps Script and every
    reply is rejected.
+
+   **And never put a time through `clean_`.** It strips the characters that are
+   unsafe in a filename, the colon among them, so `14:30` reaches `time_` as
+   `14 30` and the whole reply is refused for an arrival time the guest chose
+   correctly. `time_` is the only check that value needs.
 5. **Paste it in.** In the editor: select all, paste, then restore the
    `DRIVE_FOLDER_ID` line the deployed copy had. Save (⌘S / Ctrl+S) and wait for
    "Saved to Drive". A syntax error blocks the save, which is the first check.
