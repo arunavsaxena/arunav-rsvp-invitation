@@ -277,7 +277,10 @@ function saveBrideRsvp_(b) {
   oneOf_(b.arriveDate, BRIDE_ARRIVE_DATES, 'arrival date');
   // Her form asks for name, phone, transport, guests and arrival date, and
   // nothing else. Anything further is kept when it is sent and never required.
-  var arriveTime = clean_(b.arriveTime, 5);
+  // Not clean_: it replaces the colon in "14:30" with a space, and the reply
+  // was then rejected for an arrival time the guest had chosen correctly.
+  // time_ is the whole check this value needs.
+  var arriveTime = String(b.arriveTime == null ? '' : b.arriveTime).trim().slice(0, 5);
   if (arriveTime) time_(arriveTime, 'arrival time');
 
   var assistance = subset_(b.assistance, BRIDE_ASSISTANCE, 'assistance needed');
